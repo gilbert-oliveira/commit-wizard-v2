@@ -1,6 +1,15 @@
 import { log } from '@clack/prompts';
 import { loadConfig, validateConfig } from '../config/index.ts';
-import { isGitRepository, getGitStatus, getDiffStats } from '../git/index.ts';
+import { isGitRepository, getGitStatus, getDiffStats, executeCommit } from '../git/index.ts';
+import { generateWithRetry } from './openai.ts';
+import { 
+  showCommitPreview, 
+  editCommitMessage, 
+  copyToClipboard, 
+  confirmCommit, 
+  showCommitResult,
+  showCancellation 
+} from '../ui/index.ts';
 
 export async function main() {
   log.info('🚀 Commit Wizard iniciado!');
@@ -40,6 +49,62 @@ export async function main() {
   gitStatus.stagedFiles.forEach(file => log.info(`  📄 ${file}`));
   log.info(`📊 Estatísticas: +${diffStats.added} -${diffStats.removed} linhas`);
   
-  // TODO: Implementar geração de commit com OpenAI
-  log.warn('🚧 Próximo passo: implementar geração com OpenAI...');
+  // Gerar mensagem de commit com OpenAI
+  log.info('🤖 Gerando mensagem de commit com IA...');
+  
+  const result = await generateWithRetry(
+    gitStatus.diff,
+    config,
+    gitStatus.stagedFiles
+  );
+  
+  if (!result.success) {
+    log.error(`❌ Erro ao gerar commit: ${result.error}`);
+    process.exit(1);
+  }
+  
+  if (!result.suggestion) {
+    log.error('❌ Nenhuma sugestão foi gerada');
+    process.exit(1);
+  }
+  
+  log.success('✨ Mensagem de commit gerada!');
+  
+  // Interface interativa
+  while (true) {
+    const uiAction = await showCommitPreview(result.suggestion, config);
+    
+    switch (uiAction.action) {
+      case 'commit':
+        // Commit direto com mensagem gerada
+        const commitResult = executeCommit(result.suggestion.message);
+        showCommitResult(commitResult.success, commitResult.hash, commitResult.error);
+        return;
+        
+      case 'edit':
+        // Editar mensagem
+        const editAction = await editCommitMessage(result.suggestion.message);
+        if (editAction.action === 'cancel') {
+          showCancellation();
+          return;
+        }
+        if (editAction.action === 'commit' && editAction.message) {
+          const editCommitResult = executeCommit(editAction.message);
+          showCommitResult(editCommitResult.success, editCommitResult.hash, editCommitResult.error);
+          return;
+        }
+        break;
+        
+      case 'copy':
+        // Copiar para clipboard
+        await copyToClipboard(result.suggestion.message);
+        log.info('🎯 Você pode usar a mensagem copiada com: git commit -m "mensagem"');
+        return;
+        
+      case 'cancel':
+        // Cancelar operação
+        showCancellation();
+        return;
+    }
+  }
 } 
