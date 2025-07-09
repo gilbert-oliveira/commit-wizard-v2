@@ -1,0 +1,25 @@
+[install]
+# Configurações de instalação
+cache = true
+exact = false
+production = false
+
+[install.scopes]
+# Configurações para escopo de pacotes
+"@types" = "latest"
+
+[build]
+# Configurações de build
+target = "bun"
+outdir = "dist"
+minify = true
+sourcemap = false
+
+[test]
+# Configurações de teste
+timeout = 5000
+coverage = false
+
+[lockfile]
+# Configurações do lockfile
+print = "yarn" 

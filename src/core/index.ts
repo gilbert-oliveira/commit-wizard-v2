@@ -1,6 +1,6 @@
 import { log } from '@clack/prompts';
 import { loadConfig, validateConfig } from '../config/index.ts';
-import { isGitRepository, getGitStatus, getDiffStats, executeCommit } from '../git/index.ts';
+import { isGitRepository, getGitStatus, getDiffStats, executeCommit, executeFileCommit } from '../git/index.ts';
 import { generateWithRetry } from './openai.ts';
 import { 
   showCommitPreview, 
@@ -8,22 +8,40 @@ import {
   copyToClipboard, 
   confirmCommit, 
   showCommitResult,
-  showCancellation 
+  showCancellation,
+  selectFilesForCommit,
+  askContinueCommits
 } from '../ui/index.ts';
+import type { CLIArgs } from '../utils/args.ts';
 
-export async function main() {
-  log.info('🚀 Commit Wizard iniciado!');
+export async function main(args: CLIArgs = { silent: false, yes: false, auto: false, split: false, dryRun: false, help: false, version: false }) {
+  if (!args.silent) {
+    log.info('🚀 Commit Wizard iniciado!');
+  }
   
   // Verificar se estamos em um repositório Git
   if (!isGitRepository()) {
     log.error('❌ Não foi encontrado um repositório Git neste diretório.');
-    log.info('💡 Execute o comando em um diretório com repositório Git inicializado.');
+    if (!args.silent) {
+      log.info('💡 Execute o comando em um diretório com repositório Git inicializado.');
+    }
     process.exit(1);
   }
   
   // Carregar e validar configuração
-  log.info('⚙️  Carregando configuração...');
+  if (!args.silent) {
+    log.info('⚙️  Carregando configuração...');
+  }
   const config = loadConfig();
+  
+  // Sobrescrever configuração com argumentos CLI
+  if (args.split) {
+    config.splitCommits = true;
+  }
+  if (args.dryRun) {
+    config.dryRun = true;
+  }
+  
   const configErrors = validateConfig(config);
   
   if (configErrors.length > 0) {
@@ -32,25 +50,40 @@ export async function main() {
     process.exit(1);
   }
   
-  log.success(`✅ Configuração carregada (modelo: ${config.openai.model}, idioma: ${config.language})`);
+  if (!args.silent) {
+    log.success(`✅ Configuração carregada (modelo: ${config.openai.model}, idioma: ${config.language})`);
+  }
   
   // Verificar arquivos staged
-  log.info('📋 Verificando arquivos staged...');
+  if (!args.silent) {
+    log.info('📋 Verificando arquivos staged...');
+  }
   const gitStatus = getGitStatus();
   
   if (!gitStatus.hasStaged) {
     log.warn('⚠️  Nenhum arquivo foi encontrado no stage.');
-    log.info('💡 Use `git add <arquivo>` para adicionar arquivos ao stage antes de gerar o commit.');
+    if (!args.silent) {
+      log.info('💡 Use `git add <arquivo>` para adicionar arquivos ao stage antes de gerar o commit.');
+    }
     process.exit(0);
   }
   
   const diffStats = getDiffStats();
-  log.success(`✅ Encontrados ${gitStatus.stagedFiles.length} arquivo(s) staged:`);
-  gitStatus.stagedFiles.forEach(file => log.info(`  📄 ${file}`));
-  log.info(`📊 Estatísticas: +${diffStats.added} -${diffStats.removed} linhas`);
+  if (!args.silent) {
+    log.success(`✅ Encontrados ${gitStatus.stagedFiles.length} arquivo(s) staged:`);
+    gitStatus.stagedFiles.forEach(file => log.info(`  📄 ${file}`));
+    log.info(`📊 Estatísticas: +${diffStats.added} -${diffStats.removed} linhas`);
+  }
+  
+  // Modo Split: commits separados por arquivo
+  if (config.splitCommits) {
+    return await handleSplitMode(gitStatus, config, args);
+  }
   
   // Gerar mensagem de commit com OpenAI
-  log.info('🤖 Gerando mensagem de commit com IA...');
+  if (!args.silent) {
+    log.info('🤖 Gerando mensagem de commit com IA...');
+  }
   
   const result = await generateWithRetry(
     gitStatus.diff,
@@ -68,7 +101,24 @@ export async function main() {
     process.exit(1);
   }
   
-  log.success('✨ Mensagem de commit gerada!');
+  if (!args.silent) {
+    log.success('✨ Mensagem de commit gerada!');
+  }
+  
+  // Modo Dry Run: apenas mostrar mensagem
+  if (config.dryRun) {
+    log.info('🔍 Modo Dry Run - Mensagem gerada:');
+    log.info(`"${result.suggestion.message}"`);
+    log.info('💡 Execute sem --dry-run para fazer o commit');
+    return;
+  }
+  
+  // Modo automático: commit direto
+  if (args.yes) {
+    const commitResult = executeCommit(result.suggestion.message);
+    showCommitResult(commitResult.success, commitResult.hash, commitResult.error);
+    return;
+  }
   
   // Interface interativa
   while (true) {
@@ -98,7 +148,9 @@ export async function main() {
       case 'copy':
         // Copiar para clipboard
         await copyToClipboard(result.suggestion.message);
-        log.info('🎯 Você pode usar a mensagem copiada com: git commit -m "mensagem"');
+        if (!args.silent) {
+          log.info('🎯 Você pode usar a mensagem copiada com: git commit -m "mensagem"');
+        }
         return;
         
       case 'cancel':
@@ -106,5 +158,124 @@ export async function main() {
         showCancellation();
         return;
     }
+  }
+}
+
+async function handleSplitMode(gitStatus: any, config: any, args: CLIArgs) {
+  if (!args.silent) {
+    log.info('🔄 Modo Split ativado - Commits separados por arquivo');
+  }
+  
+  let remainingFiles = [...gitStatus.stagedFiles];
+  
+  while (remainingFiles.length > 0) {
+    // Selecionar arquivos para este commit
+    const selectedFiles = args.yes 
+      ? [remainingFiles[0]] // Modo automático: um arquivo por vez
+      : await selectFilesForCommit(remainingFiles);
+    
+    if (selectedFiles.length === 0) {
+      if (!args.silent) {
+        log.info('❌ Nenhum arquivo selecionado');
+      }
+      break;
+    }
+    
+    // Gerar diff apenas dos arquivos selecionados
+    const { getFileDiff } = await import('../git/index.ts');
+    const fileDiffs = selectedFiles.map(file => {
+      try {
+        return getFileDiff(file);
+      } catch (error) {
+        log.error(`❌ Erro ao obter diff do arquivo ${file}: ${error instanceof Error ? error.message : 'Erro desconhecido'}`);
+        return '';
+      }
+    }).filter(diff => diff.length > 0).join('\n');
+    
+    if (!fileDiffs) {
+      if (!args.silent) {
+        log.warn('⚠️  Nenhum diff encontrado para os arquivos selecionados');
+      }
+      remainingFiles = remainingFiles.filter(file => !selectedFiles.includes(file));
+      continue;
+    }
+    
+    if (!args.silent) {
+      log.info(`🤖 Gerando commit para: ${selectedFiles.join(', ')}`);
+    }
+    
+    const result = await generateWithRetry(fileDiffs, config, selectedFiles);
+    
+    if (!result.success) {
+      log.error(`❌ Erro ao gerar commit: ${result.error}`);
+      remainingFiles = remainingFiles.filter(file => !selectedFiles.includes(file));
+      continue;
+    }
+    
+    if (!result.suggestion) {
+      log.error('❌ Nenhuma sugestão foi gerada');
+      remainingFiles = remainingFiles.filter(file => !selectedFiles.includes(file));
+      continue;
+    }
+    
+    // Modo Dry Run: apenas mostrar mensagem
+    if (config.dryRun) {
+      log.info(`🔍 Dry Run - Mensagem para ${selectedFiles.join(', ')}:`);
+      log.info(`"${result.suggestion.message}"`);
+      remainingFiles = remainingFiles.filter(file => !selectedFiles.includes(file));
+      continue;
+    }
+    
+    // Modo automático: commit direto
+    if (args.yes) {
+      // Para múltiplos arquivos, usar commit normal
+      // Para arquivo único, usar executeFileCommit
+      const commitResult = selectedFiles.length === 1 
+        ? await executeFileCommit(selectedFiles[0], result.suggestion.message)
+        : await executeCommit(result.suggestion.message);
+      
+      showCommitResult(commitResult.success, commitResult.hash, commitResult.error);
+    } else {
+      // Interface interativa para este commit
+      const uiAction = await showCommitPreview(result.suggestion, config);
+      
+      if (uiAction.action === 'commit') {
+        const commitResult = selectedFiles.length === 1 
+          ? await executeFileCommit(selectedFiles[0], result.suggestion.message)
+          : await executeCommit(result.suggestion.message);
+        showCommitResult(commitResult.success, commitResult.hash, commitResult.error);
+      } else if (uiAction.action === 'edit') {
+        const editAction = await editCommitMessage(result.suggestion.message);
+        if (editAction.action === 'commit' && editAction.message) {
+          const commitResult = selectedFiles.length === 1 
+            ? await executeFileCommit(selectedFiles[0], editAction.message)
+            : await executeCommit(editAction.message);
+          showCommitResult(commitResult.success, commitResult.hash, commitResult.error);
+        }
+      } else if (uiAction.action === 'copy') {
+        await copyToClipboard(result.suggestion.message);
+        if (!args.silent) {
+          log.info('🎯 Mensagem copiada para clipboard');
+        }
+      } else if (uiAction.action === 'cancel') {
+        showCancellation();
+        return;
+      }
+    }
+    
+    // Remover arquivos processados
+    remainingFiles = remainingFiles.filter(file => !selectedFiles.includes(file));
+    
+    // Perguntar se quer continuar (exceto em modo automático)
+    if (remainingFiles.length > 0 && !args.yes) {
+      const continueCommits = await askContinueCommits(remainingFiles);
+      if (!continueCommits) {
+        break;
+      }
+    }
+  }
+  
+  if (!args.silent) {
+    log.success('✅ Modo Split concluído!');
   }
 } 
