@@ -93,6 +93,34 @@ function getStyleInstructions(style: string, language: string): string {
 }
 
 /**
+ * Extrai o tipo de commit da mensagem gerada pela OpenAI
+ */
+export function extractCommitTypeFromMessage(message: string): CommitSuggestion['type'] | null {
+  const messageLower = message.toLowerCase();
+  
+  // Padrões para detectar tipos de commit
+  const typePatterns = {
+    feat: /^(feat|feature)(\([^)]+\))?:/i,
+    fix: /^(fix|bugfix)(\([^)]+\))?:/i,
+    docs: /^(docs|documentation)(\([^)]+\))?:/i,
+    style: /^(style|format)(\([^)]+\))?:/i,
+    refactor: /^(refactor|refactoring)(\([^)]+\))?:/i,
+    test: /^(test|testing)(\([^)]+\))?:/i,
+    chore: /^(chore|maintenance)(\([^)]+\))?:/i,
+    build: /^(build|ci)(\([^)]+\))?:/i,
+    ci: /^(ci|continuous-integration)(\([^)]+\))?:/i
+  };
+
+  for (const [type, pattern] of Object.entries(typePatterns)) {
+    if (pattern.test(message)) {
+      return type as CommitSuggestion['type'];
+    }
+  }
+
+  return null;
+}
+
+/**
  * Detecta o tipo de commit baseado no diff
  */
 export function detectCommitType(diff: string, filenames: string[]): CommitSuggestion['type'] {
@@ -205,13 +233,15 @@ export async function generateCommitMessage(
     // Remover quebras de linha extras
     message = message.trim();
 
-    const detectedType = detectCommitType(diff, filenames);
+    // Extrair tipo da mensagem gerada pela OpenAI
+    const extractedType = extractCommitTypeFromMessage(message);
+    const fallbackType = detectCommitType(diff, filenames);
 
     return {
       success: true,
       suggestion: {
         message,
-        type: detectedType,
+        type: extractedType || fallbackType,
         confidence: 0.8 // Placeholder - pode ser melhorado
       }
     };
