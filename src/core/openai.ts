@@ -37,7 +37,7 @@ Analise o diff abaixo e gere UMA mensagem de commit que:
 2. Descreva o que foi alterado
 3. Siga o estilo ${config.commitStyle}
 4. Use ${language}
-5. Retorne APENAS a mensagem do commit, sem explicações adicionais
+5. Retorne APENAS a mensagem do commit, sem explicações adicionais ou formatação
 
 DIFF:
 \`\`\`
@@ -190,7 +190,7 @@ export async function generateCommitMessage(
     }
 
     const data = await response.json() as any;
-    const message = data.choices?.[0]?.message?.content?.trim();
+    let message = data.choices?.[0]?.message?.content?.trim();
 
     if (!message) {
       return {
@@ -198,6 +198,12 @@ export async function generateCommitMessage(
         error: 'OpenAI retornou resposta vazia'
       };
     }
+
+    // Remover backticks se presentes
+    message = message.replace(/^```\s*/, '').replace(/\s*```$/, '');
+    
+    // Remover quebras de linha extras
+    message = message.trim();
 
     const detectedType = detectCommitType(diff, filenames);
 
