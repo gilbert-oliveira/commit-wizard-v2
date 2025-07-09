@@ -1,0 +1,30 @@
+{
+  "name": "commit-wizard",
+  "version": "1.0.0",
+  "description": "CLI inteligente para gerar mensagens de commit usando OpenAI",
+  "module": "index.ts",
+  "type": "module",
+  "bin": {
+    "commit-wizard": "./bin/commit-wizard.ts"
+  },
+  "scripts": {
+    "dev": "bun run bin/commit-wizard.ts",
+    "build": "bun build bin/commit-wizard.ts --outdir=dist --target=bun",
+    "test": "bun test"
+  },
+  "keywords": ["git", "commit", "ai", "openai", "cli"],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "@clack/prompts": "^0.7.0",
+    "clipboardy": "^4.0.0",
+    "simple-git": "^3.25.0",
+    "dotenv": "^16.4.5"
+  },
+  "devDependencies": {
+    "@types/bun": "latest"
+  },
+  "peerDependencies": {
+    "typescript": "^5"
+  }
+}
