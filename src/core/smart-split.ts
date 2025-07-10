@@ -175,12 +175,86 @@ export async function generateGroupDiff(group: FileGroup): Promise<string> {
   
   const diffs = group.files.map(file => {
     try {
-      return getFileDiff(file);
+      const diff = getFileDiff(file);
+      return diff;
     } catch (error) {
       log.error(`❌ Erro ao obter diff do arquivo ${file}: ${error instanceof Error ? error.message : 'Erro desconhecido'}`);
       return '';
     }
   }).filter(diff => diff.length > 0);
+  
+  // Se não há diffs válidos, mas há arquivos no grupo, 
+  // pode ser que os arquivos sejam novos (untracked) ou foram recriados
+  if (diffs.length === 0 && group.files.length > 0) {
+    // Verificar se os arquivos existem e são novos
+    const { execSync } = await import('child_process');
+    
+    const newFiles = group.files.filter(file => {
+      try {
+        // Verificar se o arquivo existe
+        execSync(`test -f "${file}"`, { stdio: 'ignore' });
+        
+        // Verificar se é um arquivo novo (não tracked)
+        const status = execSync(`git status --porcelain -- "${file}"`, { 
+          encoding: 'utf-8', 
+          stdio: 'pipe' 
+        }).trim();
+        
+        // Se começa com ??, é um arquivo novo
+        return status.startsWith('??');
+      } catch {
+        return false;
+      }
+    });
+    
+    if (newFiles.length > 0) {
+      // Para arquivos novos, criar um diff simulado
+      return newFiles.map(file => {
+        try {
+          const content = execSync(`cat "${file}"`, { 
+            encoding: 'utf-8', 
+            stdio: 'pipe' 
+          });
+          return `diff --git a/${file} b/${file}\nnew file mode 100644\nindex 0000000..${Math.random().toString(36).substr(2, 7)}\n--- /dev/null\n+++ b/${file}\n@@ -0,0 +1,${content.split('\n').length} @@\n${content.split('\n').map(line => `+${line}`).join('\n')}`;
+        } catch {
+          return '';
+        }
+      }).filter(diff => diff.length > 0).join('\n');
+    }
+    
+    // Verificar se há arquivos que foram deletados e recriados
+    const recreatedFiles = group.files.filter(file => {
+      try {
+        // Verificar se o arquivo existe
+        execSync(`test -f "${file}"`, { stdio: 'ignore' });
+        
+        // Verificar se está no stage mas não tem diff
+        const stagedStatus = execSync(`git diff --cached --name-only`, { 
+          encoding: 'utf-8', 
+          stdio: 'pipe' 
+        }).trim().split('\n');
+        
+        return stagedStatus.includes(file);
+      } catch {
+        return false;
+      }
+    });
+    
+    if (recreatedFiles.length > 0) {
+      // Para arquivos recriados, criar um diff que mostra o conteúdo atual
+      return recreatedFiles.map(file => {
+        try {
+          const content = execSync(`cat "${file}"`, { 
+            encoding: 'utf-8', 
+            stdio: 'pipe' 
+          });
+          return `diff --git a/${file} b/${file}\nindex 0000000..${Math.random().toString(36).substr(2, 7)} 100644\n--- a/${file}\n+++ b/${file}\n@@ -1 +1,${content.split('\n').length} @@\n${content.split('\n').map(line => `+${line}`).join('\n')}`;
+        } catch {
+          return '';
+        }
+      }).filter(diff => diff.length > 0).join('\n');
+    }
+  }
   
   return diffs.join('\n');
 }
@@ -245,6 +319,8 @@ export async function handleSmartSplitMode(
     if (!groupDiff) {
       if (!args.silent) {
         log.warn(`⚠️  Nenhum diff encontrado para o grupo: ${group.name}`);
+        log.info(`   📄 Arquivos: ${group.files.join(', ')}`);
+        log.info(`   💡 Possível causa: arquivos novos, deletados/recriados, ou sem mudanças`);
       }
       continue;
     }
