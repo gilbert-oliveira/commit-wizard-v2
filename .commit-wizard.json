@@ -9,5 +9,9 @@
   "ui": {
     "showProgress": true,
     "theme": "default"
+  },
+  "prompt": {
+    "style": "conventional",
+    "language": "pt"
   }
 } 
