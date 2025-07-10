@@ -9,9 +9,9 @@ updates:
       time: "09:00"
     open-pull-requests-limit: 10
     reviewers:
-      - "gilbert"
+      - "gilbert-oliveira"
     assignees:
-      - "gilbert"
+      - "gilbert-oliveira"
     commit-message:
       prefix: "chore"
       include: "scope"
@@ -36,9 +36,9 @@ updates:
       time: "09:00"
     open-pull-requests-limit: 5
     reviewers:
-      - "gilbert"
+      - "gilbert-oliveira"
     assignees:
-      - "gilbert"
+      - "gilbert-oliveira"
     commit-message:
       prefix: "ci"
       include: "scope"
