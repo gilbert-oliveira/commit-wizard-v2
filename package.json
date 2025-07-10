@@ -14,7 +14,7 @@
     "test": "bun test",
     "test:watch": "bun test --watch",
     "test:coverage": "bun test && node scripts/generate-lcov.js",
-    "test:coverage:report": "c8 --reporter=html --reporter=text --include='src/**/*.ts' --exclude='**/*.test.ts' --exclude='**/__tests__/**' bun test && open coverage/lcov-report/index.html",
+    "test:coverage:report": "c8 --reporter=html --reporter=text --include='src/**/*.ts' --exclude='**/*.test.ts' bun test && open coverage/lcov-report/index.html",
     "test:coverage:upload": "bun test && node scripts/generate-lcov.js && node scripts/upload-codecov.js",
     "prepublishOnly": "bun run build && bun test",
     "start": "bun run bin/commit-wizard.ts",

@@ -32,7 +32,6 @@ ignore:
   - "tests/"
   - "**/*.test.ts"
   - "**/*.test.js"
-  - "**/__tests__/"
   - "bin/"
   - "dist/"
   - "scripts/"
