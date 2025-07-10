@@ -1,8 +1,8 @@
 # commit-wizard
 
-[![CI/CD](https://github.com/user/commit-wizard/workflows/CI%2FCD%20Pipeline/badge.svg)](https://github.com/user/commit-wizard/actions)
-[![Security](https://github.com/user/commit-wizard/workflows/Segurança%20e%20Análise%20de%20Código/badge.svg)](https://github.com/user/commit-wizard/actions)
-[![Deploy](https://github.com/user/commit-wizard/workflows/Deploy%20e%20Testes%20de%20Ambiente/badge.svg)](https://github.com/user/commit-wizard/actions)
+[![CI/CD](https://github.com/gilbert-oliveira/commit-wizard-v2/workflows/CI%2FCD%20Pipeline/badge.svg)](https://github.com/gilbert-oliveira/commit-wizard-v2/actions)
+[![Security](https://github.com/gilbert-oliveira/commit-wizard-v2/workflows/Segurança%20e%20Análise%20de%20Código/badge.svg)](https://github.com/gilbert-oliveira/commit-wizard-v2/actions)
+[![Deploy](https://github.com/gilbert-oliveira/commit-wizard-v2/workflows/Deploy%20e%20Testes%20de%20Ambiente/badge.svg)](https://github.com/gilbert-oliveira/commit-wizard-v2/actions)
 [![npm version](https://badge.fury.io/js/commit-wizard.svg)](https://badge.fury.io/js/commit-wizard)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Bun](https://img.shields.io/badge/Bun-1.0.0-000000?style=flat&logo=bun)](https://bun.sh)
@@ -27,7 +27,7 @@
 ### Última Release
 - **Versão**: [![npm version](https://badge.fury.io/js/commit-wizard.svg)](https://badge.fury.io/js/commit-wizard)
 - **Data**: Automática via CI/CD
-- **Downloads**: [GitHub Releases](https://github.com/user/commit-wizard/releases)
+- **Downloads**: [GitHub Releases](https://github.com/gilbert-oliveira/commit-wizard-v2/releases)
 
 ### Instalação
 ```bash
@@ -51,7 +51,7 @@ bun add -g commit-wizard
 ### Setup Local
 ```bash
 # Clone o repositório
-git clone https://github.com/user/commit-wizard.git
+git clone https://github.com/gilbert-oliveira/commit-wizard.git
 cd commit-wizard
 
 # Instale dependências
@@ -93,9 +93,9 @@ bun run release:major # Release major
 - **Branch Protection**: Proteções automáticas
 
 ### Relatórios
-- [Security Advisories](https://github.com/user/commit-wizard/security/advisories)
-- [Dependabot Alerts](https://github.com/user/commit-wizard/security/dependabot)
-- [Code Scanning](https://github.com/user/commit-wizard/security/code-scanning)
+- [Security Advisories](https://github.com/gilbert-oliveira/commit-wizard-v2/security/advisories)
+- [Dependabot Alerts](https://github.com/gilbert-oliveira/commit-wizard-v2/security/dependabot)
+- [Code Scanning](https://github.com/gilbert-oliveira/commit-wizard-v2/security/code-scanning)
 
 ## 📊 Métricas
 
@@ -169,8 +169,8 @@ MIT License - veja [LICENSE](LICENSE) para detalhes.
 ## 🔗 Links
 
 - **Documentação**: [README.md](../README.md)
-- **Issues**: [GitHub Issues](https://github.com/user/commit-wizard/issues)
-- **Discussions**: [GitHub Discussions](https://github.com/user/commit-wizard/discussions)
+- **Issues**: [GitHub Issues](https://github.com/gilbert-oliveira/commit-wizard-v2/issues)
+- **Discussions**: [GitHub Discussions](https://github.com/gilbert-oliveira/commit-wizard-v2/discussions)
 - **Security**: [Security Policy](SECURITY.md)
 - **Contributing**: [CONTRIBUTING.md](CONTRIBUTING.md)
 
