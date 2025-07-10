@@ -1,10 +1,10 @@
 import { describe, it, expect, beforeEach } from 'bun:test';
-import { 
-  initializeCache, 
-  getCachedAnalysis, 
-  setCachedAnalysis, 
-  clearCache, 
-  getCacheStats 
+import {
+  initializeCache,
+  getCachedAnalysis,
+  setCachedAnalysis,
+  clearCache,
+  getCacheStats,
 } from '../src/core/cache.ts';
 import type { Config } from '../src/config/index.ts';
 import type { FileGroup } from '../src/core/smart-split.ts';
@@ -17,7 +17,7 @@ describe('Cache Module', () => {
       temperature: 0.7,
       apiKey: 'test-key',
       timeout: 30000,
-      retries: 2
+      retries: 2,
     },
     language: 'pt',
     commitStyle: 'conventional',
@@ -28,13 +28,13 @@ describe('Cache Module', () => {
       enabled: true,
       minGroupSize: 1,
       maxGroups: 5,
-      confidenceThreshold: 0.7
+      confidenceThreshold: 0.7,
     },
     cache: {
       enabled: true,
       ttl: 60, // 1 hora
-      maxSize: 10
-    }
+      maxSize: 10,
+    },
   };
 
   const mockGroups: FileGroup[] = [
@@ -44,8 +44,8 @@ describe('Cache Module', () => {
       description: 'Test description',
       files: ['file1.ts', 'file2.ts'],
       diff: '',
-      confidence: 0.8
-    }
+      confidence: 0.8,
+    },
   ];
 
   beforeEach(() => {
@@ -57,7 +57,7 @@ describe('Cache Module', () => {
     it('should initialize cache with config', () => {
       initializeCache(mockConfig);
       const stats = getCacheStats();
-      
+
       expect(stats).toBeDefined();
       expect(stats?.enabled).toBe(true);
       expect(stats?.maxSize).toBe(10);
@@ -65,9 +65,12 @@ describe('Cache Module', () => {
     });
 
     it('should handle disabled cache', () => {
-      const disabledConfig = { ...mockConfig, cache: { ...mockConfig.cache, enabled: false } };
+      const disabledConfig = {
+        ...mockConfig,
+        cache: { ...mockConfig.cache, enabled: false },
+      };
       initializeCache(disabledConfig);
-      
+
       const result = getCachedAnalysis(['file1.ts'], 'test diff');
       expect(result.hit).toBe(false);
     });
@@ -76,7 +79,7 @@ describe('Cache Module', () => {
   describe('getCachedAnalysis', () => {
     it('should return cache miss when no entry exists', () => {
       initializeCache(mockConfig);
-      
+
       const result = getCachedAnalysis(['file1.ts'], 'test diff');
       expect(result.hit).toBe(false);
       expect(result.groups).toBeUndefined();
@@ -84,10 +87,10 @@ describe('Cache Module', () => {
 
     it('should return cache hit when entry exists', () => {
       initializeCache(mockConfig);
-      
+
       // Armazenar no cache
       setCachedAnalysis(['file1.ts'], 'test diff', mockGroups);
-      
+
       // Verificar cache hit
       const result = getCachedAnalysis(['file1.ts'], 'test diff');
       expect(result.hit).toBe(true);
@@ -97,16 +100,16 @@ describe('Cache Module', () => {
 
     it('should handle different contexts as separate entries', () => {
       initializeCache(mockConfig);
-      
+
       // Armazenar duas análises diferentes
       setCachedAnalysis(['file1.ts'], 'diff1', mockGroups);
       setCachedAnalysis(['file2.ts'], 'diff2', mockGroups);
-      
+
       // Verificar que são entradas separadas
       const result1 = getCachedAnalysis(['file1.ts'], 'diff1');
       const result2 = getCachedAnalysis(['file2.ts'], 'diff2');
       const result3 = getCachedAnalysis(['file1.ts'], 'diff2'); // Diferente
-      
+
       expect(result1.hit).toBe(true);
       expect(result2.hit).toBe(true);
       expect(result3.hit).toBe(false);
@@ -114,9 +117,9 @@ describe('Cache Module', () => {
 
     it('should be case sensitive for file names', () => {
       initializeCache(mockConfig);
-      
+
       setCachedAnalysis(['File1.ts'], 'test diff', mockGroups);
-      
+
       const result = getCachedAnalysis(['file1.ts'], 'test diff');
       expect(result.hit).toBe(false);
     });
@@ -125,19 +128,22 @@ describe('Cache Module', () => {
   describe('setCachedAnalysis', () => {
     it('should store analysis in cache', () => {
       initializeCache(mockConfig);
-      
+
       setCachedAnalysis(['file1.ts'], 'test diff', mockGroups);
-      
+
       const stats = getCacheStats();
       expect(stats?.size).toBe(1);
     });
 
     it('should not store when cache is disabled', () => {
-      const disabledConfig = { ...mockConfig, cache: { ...mockConfig.cache, enabled: false } };
+      const disabledConfig = {
+        ...mockConfig,
+        cache: { ...mockConfig.cache, enabled: false },
+      };
       initializeCache(disabledConfig);
-      
+
       setCachedAnalysis(['file1.ts'], 'test diff', mockGroups);
-      
+
       const stats = getCacheStats();
       expect(stats?.size).toBe(0);
     });
@@ -146,12 +152,12 @@ describe('Cache Module', () => {
   describe('getCacheStats', () => {
     it('should return correct stats', () => {
       initializeCache(mockConfig);
-      
+
       const stats = getCacheStats();
       expect(stats).toEqual({
         size: 0,
         maxSize: 10,
-        enabled: true
+        enabled: true,
       });
     });
 
@@ -165,32 +171,35 @@ describe('Cache Module', () => {
   describe('clearCache', () => {
     it('should clear all cache entries', () => {
       initializeCache(mockConfig);
-      
+
       setCachedAnalysis(['file1.ts'], 'test diff', mockGroups);
       setCachedAnalysis(['file2.ts'], 'test diff2', mockGroups);
-      
+
       expect(getCacheStats()?.size).toBe(2);
-      
+
       clearCache();
-      
+
       expect(getCacheStats()).toBeNull();
     });
   });
 
   describe('TTL (Time To Live)', () => {
     it('should respect TTL configuration', () => {
-      const shortTTLConfig = { ...mockConfig, cache: { ...mockConfig.cache, ttl: 1 } }; // 1 minuto
+      const shortTTLConfig = {
+        ...mockConfig,
+        cache: { ...mockConfig.cache, ttl: 1 },
+      }; // 1 minuto
       initializeCache(shortTTLConfig);
-      
+
       setCachedAnalysis(['file1.ts'], 'test diff', mockGroups);
-      
+
       // Simular passagem de tempo (mais de 1 minuto)
       const originalDateNow = Date.now;
       Date.now = () => originalDateNow() + 2 * 60 * 1000; // +2 minutos
-      
+
       const result = getCachedAnalysis(['file1.ts'], 'test diff');
       expect(result.hit).toBe(false);
-      
+
       // Restaurar Date.now
       Date.now = originalDateNow;
     });
@@ -198,16 +207,19 @@ describe('Cache Module', () => {
 
   describe('Max Size', () => {
     it('should respect max size configuration', () => {
-      const smallCacheConfig = { ...mockConfig, cache: { ...mockConfig.cache, maxSize: 2 } };
+      const smallCacheConfig = {
+        ...mockConfig,
+        cache: { ...mockConfig.cache, maxSize: 2 },
+      };
       initializeCache(smallCacheConfig);
-      
+
       // Adicionar 3 entradas (excede maxSize de 2)
       setCachedAnalysis(['file1.ts'], 'diff1', mockGroups);
       setCachedAnalysis(['file2.ts'], 'diff2', mockGroups);
       setCachedAnalysis(['file3.ts'], 'diff3', mockGroups);
-      
+
       const stats = getCacheStats();
       expect(stats?.size).toBeLessThanOrEqual(2);
     });
   });
-}); 
+});

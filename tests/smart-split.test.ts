@@ -1,5 +1,8 @@
 import { describe, it, expect, beforeEach } from 'bun:test';
-import { analyzeFileContext, generateGroupDiff } from '../src/core/smart-split.ts';
+import {
+  analyzeFileContext,
+  generateGroupDiff,
+} from '../src/core/smart-split.ts';
 import type { Config } from '../src/config/index.ts';
 
 describe('Smart Split', () => {
@@ -16,51 +19,24 @@ describe('Smart Split', () => {
           maxTokens: 1000,
           temperature: 0.7,
           timeout: 30000,
-          retries: 2
+          retries: 2,
         },
-        language: 'pt-BR',
+        language: 'pt',
         commitStyle: 'conventional',
         autoCommit: false,
         splitCommits: false,
         dryRun: false,
-        prompt: {
-          includeFileNames: true,
-          includeDiffStats: true,
-          customInstructions: '',
-          maxDiffSize: 8000
-        },
         smartSplit: {
           enabled: true,
           minGroupSize: 1,
           maxGroups: 5,
-          autoEdit: false,
           confidenceThreshold: 0.7,
-          preferredGroupTypes: ['feat', 'fix', 'refactor', 'test', 'docs']
-        },
-        ui: {
-          theme: 'auto',
-          showProgress: true,
-          animateProgress: true,
-          compactMode: false
         },
         cache: {
           enabled: true,
           ttl: 60,
-          maxSize: 100
+          maxSize: 100,
         },
-        hooks: {
-          preCommit: [],
-          postCommit: [],
-          preGenerate: [],
-          postGenerate: []
-        },
-        advanced: {
-          maxFileSize: 1024,
-          excludePatterns: ['*.log', '*.tmp'],
-          includePatterns: [],
-          enableDebug: false,
-          logLevel: 'info'
-        }
       };
 
       const result = await analyzeFileContext(['test.ts'], 'diff', config);
@@ -78,58 +54,33 @@ describe('Smart Split', () => {
           maxTokens: 1000,
           temperature: 0.7,
           timeout: 30000,
-          retries: 2
+          retries: 2,
         },
-        language: 'pt-BR',
+        language: 'pt',
         commitStyle: 'conventional',
         autoCommit: false,
         splitCommits: false,
         dryRun: false,
-        prompt: {
-          includeFileNames: true,
-          includeDiffStats: true,
-          customInstructions: '',
-          maxDiffSize: 8000
-        },
         smartSplit: {
           enabled: true,
           minGroupSize: 1,
           maxGroups: 5,
-          autoEdit: false,
           confidenceThreshold: 0.7,
-          preferredGroupTypes: ['feat', 'fix', 'refactor', 'test', 'docs']
-        },
-        ui: {
-          theme: 'auto',
-          showProgress: true,
-          animateProgress: true,
-          compactMode: false
         },
         cache: {
           enabled: true,
           ttl: 60,
-          maxSize: 100
+          maxSize: 100,
         },
-        hooks: {
-          preCommit: [],
-          postCommit: [],
-          preGenerate: [],
-          postGenerate: []
-        },
-        advanced: {
-          maxFileSize: 1024,
-          excludePatterns: ['*.log', '*.tmp'],
-          includePatterns: [],
-          enableDebug: false,
-          logLevel: 'info'
-        }
       };
 
       const files = ['src/auth/login.ts', 'src/auth/register.ts'];
       const overallDiff = 'diff content here';
 
       // Apenas verificar que a função não quebra
-      expect(() => analyzeFileContext(files, overallDiff, config)).toBeDefined();
+      expect(() =>
+        analyzeFileContext(files, overallDiff, config)
+      ).toBeDefined();
     });
   });
 
@@ -141,11 +92,11 @@ describe('Smart Split', () => {
         description: 'Test description',
         files: [],
         diff: '',
-        confidence: 0.8
+        confidence: 0.8,
       };
 
       const result = await generateGroupDiff(group);
       expect(result).toBe('');
     });
   });
-}); 
+});

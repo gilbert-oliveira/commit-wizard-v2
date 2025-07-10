@@ -76,6 +76,7 @@ Após processar todos os grupos, você terá 4 commits organizados:
 ## Vantagens do Smart Split
 
 ### 1. Histórico Organizado
+
 ```bash
 $ git log --oneline
 a1b2c3d feat(auth): implementar sistema de login e registro
@@ -85,6 +86,7 @@ d4e5f6g test(auth): adicionar testes e documentação
 ```
 
 ### 2. Revert Seletivo
+
 ```bash
 # Reverter apenas a configuração de API
 git revert c3d4e5f
@@ -94,6 +96,7 @@ git revert d4e5f6g
 ```
 
 ### 3. Code Review Focado
+
 - Cada commit tem um propósito claro
 - Reviewers podem focar em mudanças específicas
 - Mudanças relacionadas ficam juntas
@@ -101,18 +104,21 @@ git revert d4e5f6g
 ## Comparação: Com vs Sem Smart Split
 
 ### Sem Smart Split (Commit Único)
+
 ```bash
 $ git log --oneline
 a1b2c3d feat: implementar sistema de autenticação completo
 ```
 
 **Problemas:**
+
 - Commit muito grande
 - Difícil de reverter partes específicas
 - Code review complexo
 - Histórico pouco informativo
 
 ### Com Smart Split
+
 ```bash
 $ git log --oneline
 a1b2c3d feat(auth): implementar sistema de login e registro
@@ -122,6 +128,7 @@ d4e5f6g test(auth): adicionar testes e documentação
 ```
 
 **Vantagens:**
+
 - Commits pequenos e focados
 - Fácil revert seletivo
 - Code review eficiente
@@ -130,6 +137,7 @@ d4e5f6g test(auth): adicionar testes e documentação
 ## Configuração Recomendada
 
 ### .commit-wizardrc
+
 ```json
 {
   "openai": {
@@ -152,6 +160,7 @@ d4e5f6g test(auth): adicionar testes e documentação
 ## Dicas de Uso
 
 ### 1. Use para Features Grandes
+
 ```bash
 # Desenvolvimento de feature completa
 git add .
@@ -159,6 +168,7 @@ commit-wizard --smart-split
 ```
 
 ### 2. Use para Correções Complexas
+
 ```bash
 # Correção que afeta múltiplos componentes
 git add .
@@ -166,12 +176,14 @@ commit-wizard --smart-split
 ```
 
 ### 3. Preview Antes do Commit
+
 ```bash
 # Ver como ficaria organizado
 commit-wizard --smart-split --dry-run
 ```
 
 ### 4. Modo Automático
+
 ```bash
 # Para CI/CD ou scripts
 commit-wizard --smart-split --yes
@@ -180,19 +192,25 @@ commit-wizard --smart-split --yes
 ## Troubleshooting
 
 ### Grupos Muito Pequenos
+
 Se a IA criar grupos com apenas 1 arquivo:
+
 - Considere usar split manual
 - Ajuste a temperatura no config
 - Adicione instruções customizadas
 
 ### Grupos Muito Grandes
+
 Se a IA agrupar tudo junto:
+
 - Verifique se as mudanças são realmente relacionadas
 - Use split manual para mais controle
 - Ajuste as instruções customizadas
 
 ### Erro de Análise
+
 Se a IA falhar na análise:
+
 - Verifique a conexão com a internet
 - Confirme que a API key está configurada
-- Tente com menos arquivos primeiro 
+- Tente com menos arquivos primeiro

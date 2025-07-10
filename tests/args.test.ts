@@ -5,7 +5,7 @@ describe('Args Module', () => {
   describe('parseArgs', () => {
     it('should parse empty args correctly', () => {
       const args = parseArgs([]);
-      
+
       expect(args.silent).toBe(false);
       expect(args.yes).toBe(false);
       expect(args.auto).toBe(false);
@@ -16,8 +16,16 @@ describe('Args Module', () => {
     });
 
     it('should parse long flags correctly', () => {
-      const args = parseArgs(['--silent', '--yes', '--auto', '--split', '--dry-run', '--help', '--version']);
-      
+      const args = parseArgs([
+        '--silent',
+        '--yes',
+        '--auto',
+        '--split',
+        '--dry-run',
+        '--help',
+        '--version',
+      ]);
+
       expect(args.silent).toBe(true);
       expect(args.yes).toBe(true);
       expect(args.auto).toBe(true);
@@ -29,7 +37,7 @@ describe('Args Module', () => {
 
     it('should parse short flags correctly', () => {
       const args = parseArgs(['-s', '-y', '-a', '-n', '-h', '-v']);
-      
+
       expect(args.silent).toBe(true);
       expect(args.yes).toBe(true);
       expect(args.auto).toBe(true);
@@ -40,7 +48,7 @@ describe('Args Module', () => {
 
     it('should parse mixed flags correctly', () => {
       const args = parseArgs(['--silent', '-y', '--split', '-n']);
-      
+
       expect(args.silent).toBe(true);
       expect(args.yes).toBe(true);
       expect(args.auto).toBe(false);
@@ -52,7 +60,7 @@ describe('Args Module', () => {
 
     it('should ignore unknown flags', () => {
       const args = parseArgs(['--unknown', '-x', '--silent']);
-      
+
       expect(args.silent).toBe(true);
       expect(args.yes).toBe(false);
       expect(args.auto).toBe(false);
@@ -62,4 +70,4 @@ describe('Args Module', () => {
       expect(args.version).toBe(false);
     });
   });
-}); 
+});

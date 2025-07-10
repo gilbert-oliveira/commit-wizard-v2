@@ -1,8 +1,8 @@
 import { describe, it, expect } from 'bun:test';
-import { 
-  buildPrompt, 
-  extractCommitTypeFromMessage, 
-  detectCommitType 
+import {
+  buildPrompt,
+  extractCommitTypeFromMessage,
+  detectCommitType,
 } from '../src/core/openai.ts';
 import type { Config } from '../src/config/index.ts';
 
@@ -14,7 +14,7 @@ describe('OpenAI Module', () => {
       temperature: 0.7,
       apiKey: 'sk-test-key',
       timeout: 30000,
-      retries: 2
+      retries: 2,
     },
     language: 'pt',
     commitStyle: 'conventional',
@@ -25,17 +25,22 @@ describe('OpenAI Module', () => {
       enabled: true,
       minGroupSize: 1,
       maxGroups: 5,
-      confidenceThreshold: 0.7
-    }
+      confidenceThreshold: 0.7,
+    },
+    cache: {
+      enabled: true,
+      ttl: 60,
+      maxSize: 100,
+    },
   };
 
   describe('buildPrompt', () => {
     it('should build prompt with Portuguese language', () => {
       const diff = '+console.log("test");';
       const filenames = ['test.js'];
-      
+
       const prompt = buildPrompt(diff, mockConfig, filenames);
-      
+
       expect(prompt).toContain('português');
       expect(prompt).toContain('conventional');
       expect(prompt).toContain('test.js');
@@ -46,9 +51,9 @@ describe('OpenAI Module', () => {
       const englishConfig = { ...mockConfig, language: 'en' };
       const diff = '+console.log("test");';
       const filenames = ['test.js'];
-      
+
       const prompt = buildPrompt(diff, englishConfig, filenames);
-      
+
       expect(prompt).toContain('english');
       expect(prompt).toContain('conventional');
       expect(prompt).toContain('test.js');
@@ -92,7 +97,7 @@ describe('OpenAI Module', () => {
     it('should detect test type for test files', () => {
       const diff = '+describe("test", () => {});';
       const filenames = ['test.spec.js', 'utils.test.ts'];
-      
+
       const type = detectCommitType(diff, filenames);
       expect(type).toBe('test');
     });
@@ -100,7 +105,7 @@ describe('OpenAI Module', () => {
     it('should detect docs type for markdown files', () => {
       const diff = '+# New Documentation';
       const filenames = ['README.md', 'docs/guide.md'];
-      
+
       const type = detectCommitType(diff, filenames);
       expect(type).toBe('docs');
     });
@@ -108,7 +113,7 @@ describe('OpenAI Module', () => {
     it('should detect build type for package.json', () => {
       const diff = '+"dependency": "^1.0.0"';
       const filenames = ['package.json'];
-      
+
       const type = detectCommitType(diff, filenames);
       expect(type).toBe('build');
     });
@@ -116,7 +121,7 @@ describe('OpenAI Module', () => {
     it('should detect style type for CSS files', () => {
       const diff = '+.button { color: red; }';
       const filenames = ['styles.css', 'main.scss'];
-      
+
       const type = detectCommitType(diff, filenames);
       expect(type).toBe('style');
     });
@@ -124,7 +129,7 @@ describe('OpenAI Module', () => {
     it('should detect fix type for bug-related changes', () => {
       const diff = '+// fix: resolve bug in authentication';
       const filenames = ['auth.js'];
-      
+
       const type = detectCommitType(diff, filenames);
       expect(type).toBe('fix');
     });
@@ -132,7 +137,7 @@ describe('OpenAI Module', () => {
     it('should detect feat type for new features', () => {
       const diff = '+// add new user registration feature';
       const filenames = ['user.js'];
-      
+
       const type = detectCommitType(diff, filenames);
       expect(type).toBe('feat');
     });
@@ -140,9 +145,9 @@ describe('OpenAI Module', () => {
     it('should default to chore for unrecognized changes', () => {
       const diff = '+// some random change';
       const filenames = ['random.js'];
-      
+
       const type = detectCommitType(diff, filenames);
       expect(type).toBe('chore');
     });
   });
-}); 
+});
