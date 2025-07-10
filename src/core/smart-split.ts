@@ -1,6 +1,8 @@
 import { log } from '@clack/prompts';
 import type { Config } from '../config/index.ts';
 import type { CLIArgs } from '../utils/args.ts';
+import { getCachedAnalysis, setCachedAnalysis } from './cache.ts';
+import { showCommitResult } from '../ui/index.ts';
 
 export interface FileGroup {
   id: string;
@@ -81,6 +83,16 @@ export async function analyzeFileContext(
       };
     }
 
+    // Verificar cache primeiro
+    const cachedResult = getCachedAnalysis(files, overallDiff);
+    if (cachedResult.hit && cachedResult.groups) {
+      // Remover referência a config.silent - não existe na interface Config
+      return {
+        success: true,
+        groups: cachedResult.groups
+      };
+    }
+
     const prompt = buildContextAnalysisPrompt(files, overallDiff);
     
     const response = await fetch('https://api.openai.com/v1/chat/completions', {
@@ -147,16 +159,21 @@ export async function analyzeFileContext(
       analysis.groups[0].files = [...(analysis.groups[0].files || []), ...missingFiles];
     }
 
+    const groups = analysis.groups.map((group: any) => ({
+      id: group.id || `group-${Math.random().toString(36).substr(2, 9)}`,
+      name: group.name || 'Grupo sem nome',
+      description: group.description || 'Sem descrição',
+      files: group.files || [],
+      diff: '', // Será preenchido depois
+      confidence: group.confidence || 0.5
+    }));
+
+    // Armazenar no cache
+    setCachedAnalysis(files, overallDiff, groups);
+
     return {
       success: true,
-      groups: analysis.groups.map((group: any) => ({
-        id: group.id || `group-${Math.random().toString(36).substr(2, 9)}`,
-        name: group.name || 'Grupo sem nome',
-        description: group.description || 'Sem descrição',
-        files: group.files || [],
-        diff: '', // Será preenchido depois
-        confidence: group.confidence || 0.5
-      }))
+      groups
     };
 
   } catch (error) {
@@ -512,14 +529,5 @@ export async function handleSmartSplitMode(
 
   if (!args.silent) {
     log.success('✅ Smart Split concluído!');
-  }
-}
-
-function showCommitResult(success: boolean, hash?: string, error?: string) {
-  if (success && hash) {
-    log.success(`✅ Commit realizado com sucesso!`);
-    log.info(`🔗 Hash: ${hash.substring(0, 8)}`);
-  } else {
-    log.error(`❌ Erro ao realizar commit: ${error || 'Erro desconhecido'}`);
   }
 } 

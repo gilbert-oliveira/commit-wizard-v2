@@ -15,6 +15,7 @@ import {
   chooseSplitMode
 } from '../ui/smart-split.ts';
 import { handleSmartSplitMode } from './smart-split.ts';
+import { initializeCache } from './cache.ts';
 import type { CLIArgs } from '../utils/args.ts';
 
 export async function main(args: CLIArgs = { silent: false, yes: false, auto: false, split: false, smartSplit: false, dryRun: false, help: false, version: false }) {
@@ -36,6 +37,9 @@ export async function main(args: CLIArgs = { silent: false, yes: false, auto: fa
     log.info('⚙️  Carregando configuração...');
   }
   const config = loadConfig();
+  
+  // Inicializar cache global
+  initializeCache(config);
   
   // Sobrescrever configuração com argumentos CLI
   if (args.split) {

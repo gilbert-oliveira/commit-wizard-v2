@@ -25,6 +25,11 @@ export interface Config {
     maxGroups: number;
     confidenceThreshold: number;
   };
+  cache: {
+    enabled: boolean;
+    ttl: number; // Time to live em minutos
+    maxSize: number; // Número máximo de entradas
+  };
 }
 
 const DEFAULT_CONFIG: Config = {
@@ -45,6 +50,11 @@ const DEFAULT_CONFIG: Config = {
     minGroupSize: 1,
     maxGroups: 5,
     confidenceThreshold: 0.7,
+  },
+  cache: {
+    enabled: true,
+    ttl: 60, // 1 hora
+    maxSize: 100,
   },
 };
 
@@ -113,6 +123,10 @@ function mergeConfig(defaultConfig: Config, userConfig: any): Config {
       ...defaultConfig.smartSplit,
       ...userConfig.smartSplit,
     },
+    cache: {
+      ...defaultConfig.cache,
+      ...userConfig.cache,
+    },
   };
 }
 
@@ -153,6 +167,15 @@ export function validateConfig(config: Config): string[] {
     errors.push('smartSplit.confidenceThreshold deve estar entre 0 e 1');
   }
 
+  // Validação Cache
+  if (config.cache.ttl < 1) {
+    errors.push('cache.ttl deve ser pelo menos 1 minuto');
+  }
+
+  if (config.cache.maxSize < 1) {
+    errors.push('cache.maxSize deve ser pelo menos 1');
+  }
+
   return errors;
 }
 
@@ -177,6 +200,11 @@ export function createExampleConfig(path: string = '.commit-wizardrc'): void {
       minGroupSize: 1,
       maxGroups: 5,
       confidenceThreshold: 0.7
+    },
+    cache: {
+      enabled: true,
+      ttl: 60,
+      maxSize: 100
     }
   };
 
