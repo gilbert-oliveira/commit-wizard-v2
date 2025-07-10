@@ -12,9 +12,17 @@ import {
   selectFilesForCommit,
   askContinueCommits
 } from '../ui/index.ts';
+import { 
+  chooseSplitMode,
+  showSmartSplitGroups,
+  editSmartSplitGroups,
+  confirmGroupCommit,
+  showSmartSplitProgress
+} from '../ui/smart-split.ts';
+import { handleSmartSplitMode } from './smart-split.ts';
 import type { CLIArgs } from '../utils/args.ts';
 
-export async function main(args: CLIArgs = { silent: false, yes: false, auto: false, split: false, dryRun: false, help: false, version: false }) {
+export async function main(args: CLIArgs = { silent: false, yes: false, auto: false, split: false, smartSplit: false, dryRun: false, help: false, version: false }) {
   if (!args.silent) {
     log.info('🚀 Commit Wizard iniciado!');
   }
@@ -75,9 +83,25 @@ export async function main(args: CLIArgs = { silent: false, yes: false, auto: fa
     log.info(`📊 Estatísticas: +${diffStats.added} -${diffStats.removed} linhas`);
   }
   
-  // Modo Split: commits separados por arquivo
-  if (config.splitCommits) {
-    return await handleSplitMode(gitStatus, config, args);
+  // Modo Split: escolher entre smart split e split manual
+  if (config.splitCommits || args.smartSplit) {
+    if (args.yes) {
+      // Modo automático: usar smart split
+      return await handleSmartSplitMode(gitStatus, config, args);
+    } else {
+      // Modo interativo: perguntar qual tipo de split
+      const splitAction = await chooseSplitMode();
+      
+      switch (splitAction.action) {
+        case 'proceed':
+          return await handleSmartSplitMode(gitStatus, config, args);
+        case 'manual':
+          return await handleSplitMode(gitStatus, config, args);
+        case 'cancel':
+          showCancellation();
+          return;
+      }
+    }
   }
   
   // Gerar mensagem de commit com OpenAI

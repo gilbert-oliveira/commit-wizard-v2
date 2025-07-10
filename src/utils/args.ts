@@ -3,6 +3,7 @@ export interface CLIArgs {
   yes: boolean;
   auto: boolean;
   split: boolean;
+  smartSplit: boolean;
   dryRun: boolean;
   help: boolean;
   version: boolean;
@@ -14,6 +15,7 @@ export function parseArgs(args: string[]): CLIArgs {
     yes: args.includes('--yes') || args.includes('-y'),
     auto: args.includes('--auto') || args.includes('-a'),
     split: args.includes('--split'),
+    smartSplit: args.includes('--smart-split'),
     dryRun: args.includes('--dry-run') || args.includes('-n'),
     help: args.includes('--help') || args.includes('-h'),
     version: args.includes('--version') || args.includes('-v')
@@ -28,18 +30,20 @@ USAGE:
   commit-wizard [OPTIONS]
 
 OPTIONS:
-  -s, --silent      Modo silencioso (sem logs detalhados)
-  -y, --yes         Confirmar automaticamente sem prompts
-  -a, --auto        Modo automático (--yes + --silent)
-  --split           Modo split (commits separados por arquivo)
-  -n, --dry-run     Visualizar mensagem sem fazer commit
-  -h, --help        Mostrar esta ajuda
-  -v, --version     Mostrar versão
+  -s, --silent         Modo silencioso (sem logs detalhados)
+  -y, --yes            Confirmar automaticamente sem prompts
+  -a, --auto           Modo automático (--yes + --silent)
+  --split              Modo split manual (commits separados por arquivo)
+  --smart-split        Modo smart split (IA agrupa por contexto)
+  -n, --dry-run        Visualizar mensagem sem fazer commit
+  -h, --help           Mostrar esta ajuda
+  -v, --version        Mostrar versão
 
 EXAMPLES:
   commit-wizard                    # Modo interativo padrão
   commit-wizard --yes              # Commit automático
-  commit-wizard --split            # Commits separados por arquivo
+  commit-wizard --split            # Split manual por arquivo
+  commit-wizard --smart-split      # Smart split com IA
   commit-wizard --dry-run          # Apenas visualizar mensagem
   commit-wizard --auto             # Modo totalmente automático
 

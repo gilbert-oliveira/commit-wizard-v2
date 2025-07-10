@@ -1,36 +1,114 @@
-# 🧙‍♂️ Commit Wizard
+# ��‍♂️ Commit Wizard
 
-CLI inteligente que gera mensagens de commit automaticamente usando IA da OpenAI, baseado nas mudanças do seu código.
+Um CLI inteligente para gerar mensagens de commit usando IA, baseado no `git diff --staged`.
 
 ## ✨ Funcionalidades
 
-- 🤖 **Geração Inteligente**: Analisa `git diff --staged` e gera mensagens com OpenAI
-- 🎨 **Estilos Flexíveis**: Conventional Commits, Simple ou Detailed
-- 🌍 **Multilíngue**: Português, Inglês, Espanhol, Francês
-- ✏️ **Interface Interativa**: Preview, edição, cópia e confirmação
-- 📋 **Cópia para Clipboard**: Copie a mensagem sem commitar
-- ⚙️ **Altamente Configurável**: `.commit-wizardrc` personalizável
-- 🔄 **Retry Automático**: Tolerância a falhas de rede
+- 🤖 **Geração Inteligente**: Usa OpenAI para criar mensagens de commit contextuais
+- 🌍 **Múltiplos Idiomas**: Suporte para português, inglês, espanhol e francês
+- 🎨 **Estilos de Commit**: Conventional, Simple e Detailed
+- 🧠 **Smart Split**: Agrupamento inteligente de arquivos por contexto usando IA
+- ✋ **Split Manual**: Commits separados por arquivo
+- 🔄 **Modo Interativo**: Interface amigável com preview e edição
+- ⚡ **Modo Automático**: Commit direto sem prompts
+- 🔍 **Dry Run**: Visualizar mensagem sem fazer commit
+- ⚙️ **Configurável**: Arquivo `.commit-wizardrc` para personalização
 
 ## 🚀 Instalação
 
 ```bash
 # Instalar globalmente
-bun install -g commit-wizard
+npm install -g commit-wizard
 
-# Ou usar via npx
+# Ou usar com npx
 npx commit-wizard
+
+# Ou instalar localmente
+npm install commit-wizard --save-dev
 ```
 
-## 📋 Pré-requisitos
+## 📖 Uso
 
-1. **Chave da OpenAI**: Configure `OPENAI_API_KEY` nas variáveis de ambiente
-2. **Bun.js**: Runtime JavaScript/TypeScript
-3. **Git**: Repositório inicializado com arquivos staged
+### Básico
+```bash
+# Modo interativo
+commit-wizard
 
-## 🛠️ Configuração
+# Commit automático
+commit-wizard --yes
 
-Crie um arquivo `.commit-wizardrc` na raiz do projeto:
+# Modo silencioso
+commit-wizard --silent
+```
+
+### Smart Split (Recomendado)
+```bash
+# Smart split interativo
+commit-wizard --smart-split
+
+# Smart split automático
+commit-wizard --smart-split --yes
+
+# Visualizar organização sem fazer commit
+commit-wizard --smart-split --dry-run
+```
+
+### Split Manual
+```bash
+# Split manual por arquivo
+commit-wizard --split
+
+# Split automático
+commit-wizard --split --yes
+```
+
+### Outras Opções
+```bash
+# Modo totalmente automático
+commit-wizard --auto
+
+# Apenas visualizar mensagem
+commit-wizard --dry-run
+
+# Mostrar ajuda
+commit-wizard --help
+```
+
+## 🧠 Smart Split
+
+O **Smart Split** é uma funcionalidade avançada que usa IA para analisar o contexto das mudanças e agrupar arquivos relacionados em commits lógicos.
+
+### Como Funciona
+
+1. **Análise de Contexto**: A IA analisa todos os arquivos modificados e o diff geral
+2. **Agrupamento Inteligente**: Identifica relacionamentos lógicos entre as mudanças
+3. **Commits Organizados**: Cria commits separados para cada grupo de funcionalidade
+
+### Exemplo
+
+```bash
+$ commit-wizard --smart-split
+
+🧠 Modo Smart Split ativado - Agrupando arquivos por contexto
+🤖 Analisando contexto das mudanças...
+✅ 3 grupo(s) identificado(s):
+  1. Sistema de Autenticação (2 arquivo(s))
+     📄 src/auth/login.ts, src/auth/register.ts
+  2. Componentes de UI (3 arquivo(s))
+     📄 src/components/Button.tsx, src/components/Input.tsx, src/components/Modal.tsx
+  3. Configuração de API (1 arquivo(s))
+     📄 src/config/api.ts
+```
+
+### Vantagens
+
+- **Histórico Limpo**: Commits organizados por funcionalidade
+- **Code Review Eficiente**: Pull requests mais focados
+- **Debugging Melhorado**: Identificação rápida de commits problemáticos
+
+## ⚙️ Configuração
+
+### Arquivo `.commit-wizardrc`
 
 ```json
 {
@@ -41,7 +119,6 @@ Crie um arquivo `.commit-wizardrc` na raiz do projeto:
   },
   "language": "pt",
   "commitStyle": "conventional",
-  "autoCommit": false,
   "splitCommits": false,
   "dryRun": false,
   "prompt": {
@@ -55,92 +132,98 @@ Crie um arquivo `.commit-wizardrc` na raiz do projeto:
 ### Variáveis de Ambiente
 
 ```bash
-# Obrigatória
-OPENAI_API_KEY=sua_chave_openai_aqui
-
-# Opcionais (sobrescrevem .commit-wizardrc)
-COMMIT_WIZARD_MODEL=gpt-4o
-COMMIT_WIZARD_LANGUAGE=pt
-COMMIT_WIZARD_MAX_TOKENS=150
+export OPENAI_API_KEY="sua-chave-aqui"
 ```
 
-## 📖 Como Usar
+## 📋 Opções de Linha de Comando
 
-1. **Faça suas alterações** no código
-2. **Adicione ao stage**: `git add .` ou `git add arquivo.js`
-3. **Execute o Wizard**: `commit-wizard`
-4. **Interaja** com as opções:
-   - ✅ Commit imediato
-   - ✏️ Editar mensagem
-   - 📋 Copiar para clipboard
-   - ❌ Cancelar
+| Opção | Descrição |
+|-------|-----------|
+| `--yes`, `-y` | Confirmar automaticamente sem prompts |
+| `--silent`, `-s` | Modo silencioso (sem logs detalhados) |
+| `--auto`, `-a` | Modo automático (--yes + --silent) |
+| `--split` | Split manual (commits separados por arquivo) |
+| `--smart-split` | Smart split (IA agrupa por contexto) |
+| `--dry-run`, `-n` | Visualizar mensagem sem fazer commit |
+| `--help`, `-h` | Mostrar ajuda |
+| `--version`, `-v` | Mostrar versão |
 
-## 🎯 Estilos de Commit
+## 🎯 Exemplos de Uso
 
-### Conventional
-```
-feat(auth): adicionar validação de email
-fix(api): corrigir endpoint de usuários
-docs(readme): atualizar instruções de instalação
-```
-
-### Simple
-```
-adicionar validação de email
-corrigir endpoint de usuários
-atualizar instruções de instalação
-```
-
-### Detailed
-```
-Adicionar validação de email no formulário
-
-- Implementar regex para formato válido
-- Adicionar mensagens de erro customizadas
-- Melhorar UX do formulário de login
-```
-
-## 🌟 Exemplos
-
+### Desenvolvimento Normal
 ```bash
-# Uso básico
-commit-wizard
+# Adicionar arquivos
+git add .
 
-# Com configuração inline via env
-OPENAI_API_KEY=sk-xxx commit-wizard
-
-# Verificar se há arquivos staged primeiro
-git status
-git add src/
+# Gerar commit inteligente
 commit-wizard
+```
+
+### Feature Completa
+```bash
+# Adicionar todos os arquivos da feature
+git add .
+
+# Smart split para organizar commits
+commit-wizard --smart-split
+```
+
+### Correção Rápida
+```bash
+# Adicionar arquivos da correção
+git add src/fix.ts
+
+# Commit automático
+commit-wizard --yes
+```
+
+### Preview Antes do Commit
+```bash
+# Ver como ficaria a mensagem
+commit-wizard --dry-run
 ```
 
 ## 🔧 Desenvolvimento
 
 ```bash
-# Clonar e instalar
-git clone <repo>
+# Clonar repositório
+git clone https://github.com/user/commit-wizard.git
 cd commit-wizard
-bun install
 
-# Executar em modo dev
-bun run dev
-
-# Build para produção
-bun run build
+# Instalar dependências
+npm install
 
 # Executar testes
-bun test
+npm test
+
+# Build do projeto
+npm run build
+
+# Instalar localmente
+npm link
 ```
 
-## 📝 Licença
+## 📚 Documentação
 
-MIT License - veja [LICENSE](LICENSE) para detalhes.
+- [Guia de Configuração](docs_ai/configuration.md)
+- [Smart Split](docs_ai/smart-split.md)
+- [Estilos de Commit](docs_ai/commit-styles.md)
+- [Troubleshooting](docs_ai/troubleshooting.md)
 
 ## 🤝 Contribuindo
 
-Contribuições são bem-vindas! Por favor, abra uma issue antes de submeter PRs grandes.
+1. Fork o projeto
+2. Crie uma branch para sua feature (`git checkout -b feature/AmazingFeature`)
+3. Commit suas mudanças (`git commit -m 'Add some AmazingFeature'`)
+4. Push para a branch (`git push origin feature/AmazingFeature`)
+5. Abra um Pull Request
 
----
+## 📄 Licença
 
-**Desenvolvido com ❤️ usando Bun.js e OpenAI**
+Este projeto está licenciado sob a MIT License - veja o arquivo [LICENSE](LICENSE) para detalhes.
+
+## 🙏 Agradecimentos
+
+- [OpenAI](https://openai.com/) pela API de IA
+- [Clack](https://github.com/natemoo-re/clack) pela interface CLI
+- [Bun](https://bun.sh/) pelo runtime JavaScript

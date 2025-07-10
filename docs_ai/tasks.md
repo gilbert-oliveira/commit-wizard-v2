@@ -1,116 +1,119 @@
-# Lista de Tarefas - commit-wizard
+# Tarefas do Projeto
 
-## 📁 Estrutura Inicial
+## ✅ Implementado
 
-- [x] Criar repositório `commit-wizard`
-- [x] Executar `bun init` e configurar `bin/` como entrada do CLI
-- [x] Criar pastas: `src/config`, `src/core`, `src/git`, `src/ui`, `src/utils`
-- [x] Adicionar suporte a execução global (`bin/commit-wizard.ts` com `#!/usr/bin/env bun`)
+### Core Functionality
+- [x] **Geração de commit único**: Implementado em `src/core/openai.ts`
+- [x] **Interface interativa**: Implementado em `src/ui/index.ts`
+- [x] **Validação de configuração**: Implementado em `src/config/index.ts`
+- [x] **Integração com OpenAI**: Implementado em `src/core/openai.ts`
+- [x] **Funções Git**: Implementado em `src/git/index.ts`
+- [x] **Argumentos CLI**: Implementado em `src/utils/args.ts`
+- [x] **Modo Split Manual**: Implementado em `src/core/index.ts`
+- [x] **Smart Split**: Implementado em `src/core/smart-split.ts` e `src/ui/smart-split.ts`
 
-## ⚙️ Configuração
+### Argumentos CLI
+- [x] `--silent` / `-s`: Modo silencioso
+- [x] `--yes` / `-y`: Confirmar automaticamente
+- [x] `--auto` / `-a`: Modo automático (--yes + --silent)
+- [x] `--split`: Split manual por arquivo
+- [x] `--smart-split`: Smart split com IA
+- [x] `--dry-run` / `-n`: Visualizar sem commitar
+- [x] `--help` / `-h`: Mostrar ajuda
+- [x] `--version` / `-v`: Mostrar versão
 
-- [x] Criar parser do `.commit-wizardrc`
-- [x] Adicionar suporte a variáveis de ambiente com `dotenv`
-- [x] Adicionar validação de parâmetros (modelo, idioma, etc.)
+### Integração Smart Split
+- [x] **Análise de contexto**: IA analisa arquivos e diff geral
+- [x] **Agrupamento inteligente**: Agrupa por funcionalidade/correção
+- [x] **Interface de escolha**: Usuário escolhe entre smart e manual
+- [x] **Processamento de grupos**: Gera commits para cada grupo
+- [x] **Interface de progresso**: Mostra progresso e confirmações
+- [x] **Modo automático**: Smart split sem prompts
+- [x] **Modo dry-run**: Visualizar organização sem commitar
 
-## 🔍 Git
+### Testes
+- [x] **Testes unitários**: Implementados para todos os módulos
+- [x] **Testes de configuração**: Validação de config
+- [x] **Testes de argumentos**: Parsing de CLI args
+- [x] **Testes OpenAI**: Geração de prompts e mensagens
+- [x] **Testes Smart Split**: Análise de contexto e geração de diff
 
-- [x] Função para ler `git diff --staged`
-- [x] Validação: avisar se não houver arquivos staged
-- [x] Função para executar `git commit -m "<mensagem>"`
+### Distribuição
+- [x] **bunfig.toml**: Configuração do Bun
+- [x] **package.json**: Scripts e metadados
+- [x] **LICENSE**: Licença MIT
+- [x] **Build e instalação**: Testado localmente
 
-## 🤖 Geração de Commit
+## 🔄 Em Desenvolvimento
 
-- [x] Construtor de prompt com base no diff e nas configs
-- [x] Função para consumir OpenAI (com retries e timeout)
-- [x] Implementar:
-  - [x] Commit único
-  - [x] Commit split (por arquivo ou trecho) - *✅ Implementado e integrado*
-  - [x] Preview (dry-run) - *✅ Implementado via --dry-run*
-- [x] Detectar tipo de commit (`feat`, `fix`, etc.) automaticamente
+### Melhorias do Smart Split
+- [ ] **Edição de grupos**: Interface para editar grupos antes do commit
+- [ ] **Configuração de regras**: Personalizar regras de agrupamento
+- [ ] **Cache de análises**: Cache de análises similares
+- [ ] **Feedback do usuário**: Aprendizado com escolhas do usuário
 
-## 💬 CLI Interativo
+### Interface do Usuário
+- [ ] **Tema escuro**: Suporte a tema escuro
+- [ ] **Animações**: Animações suaves na interface
+- [ ] **Atalhos de teclado**: Navegação por teclado
+- [ ] **Progresso visual**: Barras de progresso mais detalhadas
 
-- [x] Interface com `@clack/prompts`
-- [x] Passos:
-  - [x] Exibir mensagens geradas
-  - [x] Permitir edição da mensagem
-  - [x] Opção de copiar
-  - [x] Confirmar ou cancelar
-- [x] Adicionar modo silencioso (`--yes`, `--silent`) - *✅ Implementado*
-- [x] Suporte a modo automático (sem prompts se configurado) - *✅ Implementado via --auto*
+## 📋 Planejado
 
-## 🧪 Testes e Validações
+### Funcionalidades Avançadas
+- [ ] **Integração com CI/CD**: Hooks para pipelines
+- [ ] **Plugins**: Sistema de plugins
+- [ ] **Templates customizados**: Templates de commit personalizados
+- [ ] **Histórico de commits**: Sugestões baseadas em histórico
+- [ ] **Análise de impacto**: Estimativa de impacto das mudanças
 
-- [x] Verificar comportamento sem internet / sem chave
-- [x] Testar envio de diffs grandes
-- [x] Testar casos com nenhum arquivo modificado
-- [x] Testes unitários com Bun (`bun test`) - *✅ 24 testes implementados*
+### Melhorias de Performance
+- [ ] **Cache inteligente**: Cache de análises similares
+- [ ] **Processamento paralelo**: Processar grupos em paralelo
+- [ ] **Otimização de prompts**: Prompts mais eficientes
+- [ ] **Lazy loading**: Carregamento sob demanda
 
-## 🚀 Distribuição
+### Integrações
+- [ ] **GitHub Actions**: Workflow para CI/CD
+- [ ] **GitLab CI**: Integração com GitLab
+- [ ] **VS Code**: Extensão para VS Code
+- [ ] **JetBrains**: Plugin para IDEs JetBrains
 
-- [x] Configurar `bunfig.toml` para exportar comando CLI - *✅ Implementado*
-- [x] Adicionar tag binária no `package.json`
-- [x] Testar execução via `npx` e instalação global - *✅ Testado com bun link*
-- [x] Criar `README.md` com exemplos
+### Documentação
+- [ ] **Vídeos tutoriais**: Demonstrações em vídeo
+- [ ] **Exemplos interativos**: Exemplos práticos
+- [ ] **Guia de migração**: Migrar de outras ferramentas
+- [ ] **FAQ**: Perguntas frequentes
 
-## 🔁 Futuras melhorias
+## 🎯 Próximos Passos
 
-- [ ] Histórico de commits (JSON local)
-- [x] Integração com Conventional Commits - *Já implementado na detecção de tipos*
-- [ ] Templates personalizados no prompt
-- [ ] UI interativa avançada com preview ao lado
-- [ ] Suporte a plugins
+### Prioridade Alta
+1. **Edição de grupos**: Permitir editar grupos antes do commit
+2. **Configuração avançada**: Mais opções de configuração
+3. **Testes de integração**: Testes end-to-end
+4. **Documentação completa**: Guias e tutoriais
 
-## 📊 Status Final
+### Prioridade Média
+1. **Cache de análises**: Melhorar performance
+2. **Interface melhorada**: UX mais polida
+3. **Integrações**: CI/CD e IDEs
+4. **Plugins**: Sistema extensível
 
-**✅ Implementado (95%):**
-- ✅ Estrutura completa do projeto
-- ✅ Configuração via `.commit-wizardrc` e variáveis de ambiente
-- ✅ Integração completa com OpenAI
-- ✅ Interface CLI interativa
-- ✅ Operações Git (diff, commit, validações)
-- ✅ Detecção automática de tipos de commit
-- ✅ Retry automático em falhas
-- ✅ Suporte a múltiplos idiomas e estilos
-- ✅ **Argumentos CLI (--silent, --yes, --auto, --split, --dry-run)**
-- ✅ **Modo split integrado no fluxo principal**
-- ✅ **24 testes unitários implementados**
-- ✅ **Configuração de distribuição completa**
+### Prioridade Baixa
+1. **Temas**: Suporte a temas
+2. **Animações**: Interface mais fluida
+3. **Atalhos**: Navegação por teclado
+4. **Métricas**: Analytics de uso
 
-**🔄 Funcionalidades Avançadas (5%):**
-- Histórico de commits
-- Templates personalizados
-- Suporte a plugins
-- UI avançada
+## 📊 Métricas de Progresso
 
-## 🎉 Próximos Passos Implementados
+- **Core Functionality**: 100% ✅
+- **Smart Split**: 100% ✅
+- **Argumentos CLI**: 100% ✅
+- **Testes**: 100% ✅
+- **Distribuição**: 100% ✅
+- **Documentação**: 80% 🔄
+- **Interface Avançada**: 20% 📋
+- **Integrações**: 0% 📋
 
-1. ✅ **Argumentos CLI** - Implementado suporte completo a:
-   - `--silent` / `-s`: Modo silencioso
-   - `--yes` / `-y`: Confirmação automática
-   - `--auto` / `-a`: Modo automático (silent + yes)
-   - `--split`: Commits separados por arquivo
-   - `--dry-run` / `-n`: Visualizar sem commitar
-   - `--help` / `-h`: Ajuda
-   - `--version` / `-v`: Versão
-
-2. ✅ **Modo Split** - Integrado no fluxo principal:
-   - Seleção interativa de arquivos
-   - Commits separados por arquivo
-   - Suporte a modo automático
-   - Tratamento de erros
-
-3. ✅ **Testes Unitários** - 24 testes implementados:
-   - Testes de configuração
-   - Testes de argumentos CLI
-   - Testes de funções OpenAI
-   - Cobertura de casos edge
-
-4. ✅ **Distribuição** - Configuração completa:
-   - `bunfig.toml` configurado
-   - `package.json` otimizado para distribuição
-   - Arquivo LICENSE criado
-   - Build e instalação local testados
-
-O projeto está agora **95% completo** e pronto para uso em produção! 🚀
+**Progresso Geral**: 85% ✅
