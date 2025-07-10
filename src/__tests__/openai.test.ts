@@ -12,7 +12,9 @@ describe('OpenAI Module', () => {
       model: 'gpt-4o',
       maxTokens: 150,
       temperature: 0.7,
-      apiKey: 'sk-test-key'
+      apiKey: 'sk-test-key',
+      timeout: 30000,
+      retries: 2
     },
     language: 'pt',
     commitStyle: 'conventional',
@@ -22,7 +24,40 @@ describe('OpenAI Module', () => {
     prompt: {
       includeFileNames: true,
       includeDiffStats: true,
-      customInstructions: ''
+      customInstructions: '',
+      maxDiffSize: 8000
+    },
+    smartSplit: {
+      enabled: true,
+      minGroupSize: 1,
+      maxGroups: 5,
+      autoEdit: false,
+      confidenceThreshold: 0.7,
+      preferredGroupTypes: ['feat', 'fix', 'refactor', 'test', 'docs']
+    },
+    ui: {
+      theme: 'auto',
+      showProgress: true,
+      animateProgress: true,
+      compactMode: false
+    },
+    cache: {
+      enabled: true,
+      ttl: 60,
+      maxSize: 100
+    },
+    hooks: {
+      preCommit: [],
+      postCommit: [],
+      preGenerate: [],
+      postGenerate: []
+    },
+    advanced: {
+      maxFileSize: 1024,
+      excludePatterns: ['*.log', '*.tmp'],
+      includePatterns: [],
+      enableDebug: false,
+      logLevel: 'info'
     }
   };
 
