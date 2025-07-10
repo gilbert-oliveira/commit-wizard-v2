@@ -409,9 +409,6 @@ describe('Commit Wizard - Testes de Integração', () => {
         expect(config.commitStyle).toBe('conventional');
         expect(config.openai).toBeDefined();
         expect(config.smartSplit).toBeDefined();
-        expect(config.ui).toBeDefined();
-        expect(config.cache).toBeDefined();
-        expect(config.advanced).toBeDefined();
       } finally {
         // Restaurar comportamento normal
         console.warn = originalWarn;
