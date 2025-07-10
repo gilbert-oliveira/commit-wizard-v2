@@ -318,10 +318,7 @@ export async function handleSmartSplitMode(
       return;
     }
     
-    // Se o usuário editou os grupos, usar os grupos editados
-    if (userAction.groups) {
-      analysis.groups = userAction.groups;
-    }
+    // Se o usuário aceitou, segue com os grupos sugeridos
   }
 
   // Processar cada grupo
