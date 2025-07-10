@@ -242,6 +242,12 @@ describe('Commit Wizard - Testes de Integração', () => {
 
   describe('Smart Split', () => {
     it('deve analisar contexto e criar grupos', async () => {
+      // Timeout mais longo para este teste
+      const timeout = setTimeout(() => {
+        throw new Error('Teste de smart split demorou muito');
+      }, 10000); // 10 segundos
+      
+      try {
       // Mock da OpenAI para não fazer chamadas reais
       process.env.OPENAI_API_KEY = 'test-key';
       modifyFiles(tempRepo, 'complex');
@@ -262,10 +268,22 @@ describe('Commit Wizard - Testes de Integração', () => {
       expect(result).toBeInstanceOf(Promise);
       
       // Aguardar o resultado e verificar que não quebra
+      // Como não temos uma chave válida da OpenAI, esperamos que falhe graciosamente
       const analysis = await result;
       expect(analysis).toBeDefined();
       expect(typeof analysis).toBe('object');
       expect('success' in analysis).toBe(true);
+      
+      // Se a API key for inválida, o resultado deve indicar falha
+      if (!analysis.success) {
+        expect(analysis.error).toBeDefined();
+        expect(typeof analysis.error).toBe('string');
+        // Aceitar tanto erro de chave não encontrada quanto erro de API inválida
+        expect(analysis.error).toMatch(/(Chave da OpenAI não encontrada|Erro da OpenAI|Incorrect API key)/);
+      }
+    } finally {
+      clearTimeout(timeout);
+    }
     });
 
     it('deve gerar diff para grupo de arquivos', async () => {
@@ -391,6 +409,9 @@ describe('Commit Wizard - Testes de Integração', () => {
         expect(config.commitStyle).toBe('conventional');
         expect(config.openai).toBeDefined();
         expect(config.smartSplit).toBeDefined();
+        expect(config.ui).toBeDefined();
+        expect(config.cache).toBeDefined();
+        expect(config.advanced).toBeDefined();
       } finally {
         // Restaurar comportamento normal
         console.warn = originalWarn;

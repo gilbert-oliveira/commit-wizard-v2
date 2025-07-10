@@ -4,19 +4,28 @@ import { writeFileSync, unlinkSync, existsSync } from 'fs';
 import { join } from 'path';
 
 describe('Config Module', () => {
-  const testConfigPath = join(process.cwd(), 'commit-wizardrc.test');
+  // Usar um caminho temporário mais seguro
+  const testConfigPath = '/tmp/commit-wizardrc.test';
   
   beforeEach(() => {
     // Limpar arquivo de teste se existir
-    if (existsSync(testConfigPath)) {
-      unlinkSync(testConfigPath);
+    try {
+      if (existsSync(testConfigPath)) {
+        unlinkSync(testConfigPath);
+      }
+    } catch (error) {
+      // Ignorar erros de limpeza
     }
   });
   
   afterEach(() => {
     // Limpar arquivo de teste
-    if (existsSync(testConfigPath)) {
-      unlinkSync(testConfigPath);
+    try {
+      if (existsSync(testConfigPath)) {
+        unlinkSync(testConfigPath);
+      }
+    } catch (error) {
+      // Ignorar erros de limpeza
     }
   });
 
