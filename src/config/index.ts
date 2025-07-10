@@ -19,43 +19,11 @@ export interface Config {
   autoCommit: boolean;
   splitCommits: boolean;
   dryRun: boolean;
-  prompt: {
-    includeFileNames: boolean;
-    includeDiffStats: boolean;
-    customInstructions: string;
-    maxDiffSize: number;
-  };
   smartSplit: {
     enabled: boolean;
     minGroupSize: number;
     maxGroups: number;
-    autoEdit: boolean;
     confidenceThreshold: number;
-    preferredGroupTypes: string[];
-  };
-  ui: {
-    theme: 'auto' | 'light' | 'dark';
-    showProgress: boolean;
-    animateProgress: boolean;
-    compactMode: boolean;
-  };
-  cache: {
-    enabled: boolean;
-    ttl: number; // Time to live em minutos
-    maxSize: number; // Número máximo de entradas
-  };
-  hooks: {
-    preCommit: string[];
-    postCommit: string[];
-    preGenerate: string[];
-    postGenerate: string[];
-  };
-  advanced: {
-    maxFileSize: number; // Tamanho máximo de arquivo em KB
-    excludePatterns: string[];
-    includePatterns: string[];
-    enableDebug: boolean;
-    logLevel: 'error' | 'warn' | 'info' | 'debug';
   };
 }
 
@@ -72,51 +40,11 @@ const DEFAULT_CONFIG: Config = {
   autoCommit: false,
   splitCommits: false,
   dryRun: false,
-  prompt: {
-    includeFileNames: true,
-    includeDiffStats: true,
-    customInstructions: '',
-    maxDiffSize: 8000, // Caracteres máximos do diff
-  },
   smartSplit: {
     enabled: true,
     minGroupSize: 1,
     maxGroups: 5,
-    autoEdit: false,
     confidenceThreshold: 0.7,
-    preferredGroupTypes: ['feature', 'fix', 'refactor', 'test', 'docs']
-  },
-  ui: {
-    theme: 'auto',
-    showProgress: true,
-    animateProgress: true,
-    compactMode: false,
-  },
-  cache: {
-    enabled: true,
-    ttl: 60, // 1 hora
-    maxSize: 100,
-  },
-  hooks: {
-    preCommit: [],
-    postCommit: [],
-    preGenerate: [],
-    postGenerate: [],
-  },
-  advanced: {
-    maxFileSize: 1024, // 1MB
-    excludePatterns: [
-      '*.log',
-      '*.tmp',
-      '*.cache',
-      'node_modules/**',
-      '.git/**',
-      'dist/**',
-      'build/**'
-    ],
-    includePatterns: [],
-    enableDebug: false,
-    logLevel: 'info',
   },
 };
 
@@ -162,8 +90,8 @@ export function loadConfig(configPath?: string): Config {
 
   // Aplicar configurações de ambiente
   if (process.env.COMMIT_WIZARD_DEBUG === 'true') {
-    config.advanced.enableDebug = true;
-    config.advanced.logLevel = 'debug';
+    // config.advanced.enableDebug = true; // Removed advanced options
+    // config.advanced.logLevel = 'debug'; // Removed advanced options
   }
 
   if (process.env.COMMIT_WIZARD_DRY_RUN === 'true') {
@@ -181,29 +109,9 @@ function mergeConfig(defaultConfig: Config, userConfig: any): Config {
       ...defaultConfig.openai,
       ...userConfig.openai,
     },
-    prompt: {
-      ...defaultConfig.prompt,
-      ...userConfig.prompt,
-    },
     smartSplit: {
       ...defaultConfig.smartSplit,
       ...userConfig.smartSplit,
-    },
-    ui: {
-      ...defaultConfig.ui,
-      ...userConfig.ui,
-    },
-    cache: {
-      ...defaultConfig.cache,
-      ...userConfig.cache,
-    },
-    hooks: {
-      ...defaultConfig.hooks,
-      ...userConfig.hooks,
-    },
-    advanced: {
-      ...defaultConfig.advanced,
-      ...userConfig.advanced,
     },
   };
 }
@@ -245,29 +153,6 @@ export function validateConfig(config: Config): string[] {
     errors.push('smartSplit.confidenceThreshold deve estar entre 0 e 1');
   }
 
-  // Validação Cache
-  if (config.cache.ttl < 1) {
-    errors.push('cache.ttl deve ser pelo menos 1 minuto');
-  }
-
-  if (config.cache.maxSize < 1) {
-    errors.push('cache.maxSize deve ser pelo menos 1');
-  }
-
-  // Validação Avançada
-  if (config.advanced.maxFileSize < 1) {
-    errors.push('advanced.maxFileSize deve ser pelo menos 1KB');
-  }
-
-  if (!['error', 'warn', 'info', 'debug'].includes(config.advanced.logLevel)) {
-    errors.push('advanced.logLevel deve ser error, warn, info ou debug');
-  }
-
-  // Validação de timeout
-  if (config.openai.timeout < 1000 || config.openai.timeout > 120000) {
-    errors.push('openai.timeout deve estar entre 1000ms e 120000ms');
-  }
-
   return errors;
 }
 
@@ -287,48 +172,11 @@ export function createExampleConfig(path: string = '.commit-wizardrc'): void {
       timeout: 30000,
       retries: 2
     },
-    prompt: {
-      includeFileNames: true,
-      includeDiffStats: true,
-      customInstructions: '',
-      maxDiffSize: 8000
-    },
     smartSplit: {
       enabled: true,
       minGroupSize: 1,
       maxGroups: 5,
-      autoEdit: false,
-      confidenceThreshold: 0.7,
-      preferredGroupTypes: ['feat', 'fix', 'refactor', 'test', 'docs']
-    },
-    ui: {
-      theme: 'auto',
-      showProgress: true,
-      animateProgress: true,
-      compactMode: false
-    },
-    cache: {
-      enabled: true,
-      ttl: 60,
-      maxSize: 100
-    },
-    hooks: {
-      preCommit: [],
-      postCommit: [],
-      preGenerate: [],
-      postGenerate: []
-    },
-    advanced: {
-      maxFileSize: 1024,
-      excludePatterns: [
-        '*.log',
-        '*.tmp',
-        'node_modules/**',
-        '.git/**'
-      ],
-      includePatterns: [],
-      enableDebug: false,
-      logLevel: 'info'
+      confidenceThreshold: 0.7
     }
   };
 
