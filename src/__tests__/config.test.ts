@@ -1,7 +1,6 @@
 import { describe, it, expect, beforeEach, afterEach } from 'bun:test';
 import { loadConfig, validateConfig, type Config } from '../config/index.ts';
-import { writeFileSync, unlinkSync, existsSync } from 'fs';
-import { join } from 'path';
+import { unlinkSync, existsSync } from 'fs';
 
 describe('Config Module', () => {
   // Usar um caminho temporário mais seguro
