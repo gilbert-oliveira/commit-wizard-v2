@@ -121,32 +121,40 @@ const DEFAULT_CONFIG: Config = {
 };
 
 export function loadConfig(configPath?: string): Config {
-  const defaultConfigPath = join(process.cwd(), '.commit-wizardrc');
-  const globalConfigPath = join(process.env.HOME || process.env.USERPROFILE || '', '.commit-wizardrc');
+  // Usar um caminho mais seguro para ambientes CI
+  let defaultConfigPath: string;
+  try {
+    defaultConfigPath = join(process.cwd(), '.commit-wizardrc');
+  } catch (error) {
+    // Fallback para ambientes onde process.cwd() falha
+    defaultConfigPath = '/tmp/.commit-wizardrc';
+  }
+  
+  const globalConfigPath = join(process.env.HOME || process.env.USERPROFILE || '/tmp', '.commit-wizardrc');
   
   let config = { ...DEFAULT_CONFIG };
 
   // Carregar configuração global primeiro
-  if (existsSync(globalConfigPath)) {
-    try {
+  try {
+    if (existsSync(globalConfigPath)) {
       const fileContent = readFileSync(globalConfigPath, 'utf-8');
       const globalConfig = JSON.parse(fileContent);
       config = mergeConfig(config, globalConfig);
-    } catch (error) {
-      console.warn(`⚠️  Erro ao ler configuração global: ${error instanceof Error ? error.message : 'Erro desconhecido'}`);
     }
+  } catch (error) {
+    console.warn(`⚠️  Erro ao ler configuração global: ${error instanceof Error ? error.message : 'Erro desconhecido'}`);
   }
 
   // Carregar configuração local (sobrescreve a global)
   const actualConfigPath = configPath || defaultConfigPath;
-  if (existsSync(actualConfigPath)) {
-    try {
+  try {
+    if (existsSync(actualConfigPath)) {
       const fileContent = readFileSync(actualConfigPath, 'utf-8');
       const userConfig = JSON.parse(fileContent);
       config = mergeConfig(config, userConfig);
-    } catch (error) {
-      console.warn(`⚠️  Erro ao ler .commit-wizardrc: ${error instanceof Error ? error.message : 'Erro desconhecido'}`);
     }
+  } catch (error) {
+    console.warn(`⚠️  Erro ao ler .commit-wizardrc: ${error instanceof Error ? error.message : 'Erro desconhecido'}`);
   }
 
   // Adicionar chave da OpenAI das variáveis de ambiente
