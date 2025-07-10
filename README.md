@@ -4,6 +4,7 @@
 
 [![CI/CD](https://github.com/gilbert-oliveira/commit-wizard-v2/workflows/CI%2FCD%20Pipeline/badge.svg)](https://github.com/gilbert-oliveira/commit-wizard-v2/actions)
 [![Codecov](https://codecov.io/gh/gilbert-oliveira/commit-wizard-v2/branch/main/graph/badge.svg)](https://codecov.io/gh/gilbert-oliveira/commit-wizard-v2)
+[![Coverage Analytics](https://github.com/gilbert-oliveira/commit-wizard-v2/workflows/Coverage%20Analytics/badge.svg)](https://github.com/gilbert-oliveira/commit-wizard-v2/actions)
 [![npm version](https://img.shields.io/npm/v/commit-wizard.svg)](https://www.npmjs.com/package/commit-wizard)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
@@ -320,6 +321,25 @@ bun test src/__tests__      # Testes unitários
 bun test tests/             # Testes de integração
 ```
 
+### Cobertura de Testes
+```bash
+bun run test:coverage       # Gerar relatório de cobertura
+bun run test:coverage:report # Abrir relatório HTML
+bun run test:coverage:upload # Upload para Codecov
+```
+
+### Coverage Analytics
+```bash
+# Configurar analytics (primeira vez)
+./scripts/setup-coverage-analytics.sh
+
+# Relatórios de analytics
+bun run coverage:report     # Relatório básico
+bun run coverage:trends     # Análise de tendências
+bun run coverage:compare    # Comparar branches
+bun run coverage:full       # Relatório completo
+```
+
 ### Desenvolvimento Local
 ```bash
 git clone https://github.com/seu-usuario/commit-wizard
@@ -342,6 +362,63 @@ bun run build
 3. Commit suas mudanças (`git commit -m 'feat: add nova feature'`)
 4. Push para a branch (`git push origin feature/nova-feature`)
 5. Abra um Pull Request
+
+---
+
+## 📊 Coverage Analytics
+
+O commit-wizard inclui um sistema avançado de analytics de cobertura usando a API do Codecov com CODECOV_TOKEN.
+
+### 🎯 Funcionalidades
+- **Relatórios detalhados**: Cobertura por arquivo, função e linha
+- **Tendências históricas**: Análise de evolução da cobertura
+- **Comparação de branches**: Análise comparativa entre branches
+- **Recomendações inteligentes**: Sugestões baseadas na cobertura atual
+- **Notificações automáticas**: Alertas para cobertura baixa
+
+### 🚀 Configuração Rápida
+```bash
+# 1. Configure o CODECOV_TOKEN
+export CODECOV_TOKEN=seu_token_aqui
+
+# 2. Execute o setup automático
+./scripts/setup-coverage-analytics.sh
+
+# 3. Teste os analytics
+bun run coverage:report
+```
+
+### 📈 Workflow Automático
+O sistema executa automaticamente:
+- **Diariamente às 6h UTC**: Análise completa de cobertura
+- **Em Pull Requests**: Verificação de impacto na cobertura
+- **Notificações**: Alertas para cobertura abaixo de 80%
+
+### 🔧 Comandos Disponíveis
+```bash
+# Relatórios básicos
+bun run coverage:report [branch]    # Relatório de cobertura
+bun run coverage:trends             # Análise de tendências
+bun run coverage:compare [b1] [b2]  # Comparar branches
+bun run coverage:full [branch]      # Relatório completo
+
+# Analytics avançados
+bun run scripts/coverage-analytics.ts report main
+bun run scripts/coverage-analytics.ts trends
+bun run scripts/coverage-analytics.ts compare main develop
+```
+
+### 📊 Dashboard e Visualizações
+- **Dashboard**: https://codecov.io/gh/[owner]/[repo]
+- **Analytics**: https://codecov.io/gh/[owner]/[repo]/analytics
+- **Relatórios**: Gerados automaticamente em JSON
+
+### 🛡️ Segurança
+- Tokens armazenados como secrets no GitHub
+- Autenticação Bearer para API v2
+- Configurações de segurança no `.codecov.yml`
+
+Para mais detalhes, consulte a [documentação completa](docs_ai/coverage-analytics.md).
 
 ---
 
