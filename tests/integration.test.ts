@@ -253,10 +253,19 @@ describe('Commit Wizard - Testes de Integração', () => {
       const files = ['src/api.ts', 'src/utils.ts', 'docs/API.md', 'package.json'];
       const diff = 'mock diff content';
       
-      // Este teste seria melhor com um mock real da OpenAI
-      // Por enquanto, apenas verificamos se a função pode ser chamada
+      // Verificar se a função existe e pode ser chamada
       expect(analyzeFileContext).toBeDefined();
       expect(typeof analyzeFileContext).toBe('function');
+      
+      // Testar que a função retorna uma Promise
+      const result = analyzeFileContext(files, diff, config);
+      expect(result).toBeInstanceOf(Promise);
+      
+      // Aguardar o resultado e verificar que não quebra
+      const analysis = await result;
+      expect(analysis).toBeDefined();
+      expect(typeof analysis).toBe('object');
+      expect('success' in analysis).toBe(true);
     });
 
     it('deve gerar diff para grupo de arquivos', async () => {
@@ -366,17 +375,27 @@ describe('Commit Wizard - Testes de Integração', () => {
       console.warn = () => {};
       console.error = () => {};
 
-      const configPath = join(tempRepo, '.commit-wizardrc');
-      writeFileSync(configPath, '{ invalid json }');
-      
-      const { loadConfig } = await import('../src/config/index.ts');
-      
-      // Deve carregar configuração padrão sem quebrar
-      expect(() => loadConfig(configPath)).not.toThrow();
-
-      // Restaurar comportamento normal
-      console.warn = originalWarn;
-      console.error = originalError;
+      try {
+        const configPath = join(tempRepo, '.commit-wizardrc');
+        writeFileSync(configPath, '{ invalid json }');
+        
+        const { loadConfig } = await import('../src/config/index.ts');
+        
+        // Deve carregar configuração padrão sem quebrar
+        expect(() => loadConfig(configPath)).not.toThrow();
+        
+        // Verificar que a configuração carregada tem as propriedades esperadas
+        const config = loadConfig(configPath);
+        expect(config).toBeDefined();
+        expect(config.language).toBe('pt');
+        expect(config.commitStyle).toBe('conventional');
+        expect(config.openai).toBeDefined();
+        expect(config.smartSplit).toBeDefined();
+      } finally {
+        // Restaurar comportamento normal
+        console.warn = originalWarn;
+        console.error = originalError;
+      }
     });
 
     it('deve lidar com arquivos grandes', async () => {
