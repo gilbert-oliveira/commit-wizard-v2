@@ -10,7 +10,7 @@ on:
 
 env:
   NODE_VERSION: '18'
-  BUN_VERSION: '1.0.0'
+  BUN_VERSION: '1.2.13'
 
 jobs:
   # Testes e Qualidade de Código
