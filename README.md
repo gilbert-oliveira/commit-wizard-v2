@@ -12,23 +12,27 @@ Um CLI desenvolvido com Bun.js que analisa suas mudanças no Git e gera mensagen
 ## ✨ Funcionalidades
 
 ### 🧠 **Geração Inteligente**
+
 - **Commit único**: Analisa todas as mudanças e gera uma mensagem coesa
 - **Smart Split**: IA agrupa arquivos relacionados em commits lógicos separados
 - **Split Manual**: Divisão manual por arquivo para controle total
 
 ### ⚙️ **Configuração Flexível**
+
 - Arquivo `.commit-wizardrc` para personalização
 - Suporte a configuração global e local
 - Múltiplos modelos OpenAI (GPT-4o, GPT-3.5, etc.)
 - Estilos de commit: Conventional, Simple, Detailed
 
 ### 🎨 **Interface Rica**
+
 - Interface interativa com opções de edição
 - Preview de mensagens antes do commit
 - Copiar para clipboard
 - Modos silencioso e automático
 
 ### 🎯 **Smart Split Avançado**
+
 - Análise de contexto das mudanças
 - Agrupamento por funcionalidade, correção, refatoração
 - **Interface de edição completa**:
@@ -43,15 +47,18 @@ Um CLI desenvolvido com Bun.js que analisa suas mudanças no Git e gera mensagen
 ## 🚀 Instalação
 
 ### Pré-requisitos
+
 - [Bun](https://bun.sh/) instalado
 - Chave da API OpenAI
 
 ### Instalação Global
+
 ```bash
 bun install -g commit-wizard
 ```
 
 ### Uso via npx (sem instalação)
+
 ```bash
 npx commit-wizard
 ```
@@ -61,16 +68,19 @@ npx commit-wizard
 ## ⚡ Uso Rápido
 
 ### 1. Configure sua chave OpenAI
+
 ```bash
 export OPENAI_API_KEY="sua-chave-aqui"
 ```
 
 ### 2. Faça suas mudanças e adicione ao staging
+
 ```bash
 git add .
 ```
 
 ### 3. Execute o commit wizard
+
 ```bash
 commit-wizard
 ```
@@ -80,6 +90,7 @@ commit-wizard
 ## 📋 Comandos CLI
 
 ### Modo Básico
+
 ```bash
 commit-wizard                    # Modo interativo padrão
 commit-wizard --yes              # Aceitar automaticamente
@@ -89,6 +100,7 @@ commit-wizard --dry-run          # Visualizar sem commitar
 ```
 
 ### Split de Commits
+
 ```bash
 commit-wizard --split            # Split manual por arquivo
 commit-wizard --smart-split      # Smart Split com IA
@@ -96,6 +108,7 @@ commit-wizard --smart-split --yes # Smart Split automático
 ```
 
 ### Ajuda e Informações
+
 ```bash
 commit-wizard --help             # Mostrar ajuda
 commit-wizard --version          # Mostrar versão
@@ -149,12 +162,7 @@ Crie um arquivo `.commit-wizardrc` no seu projeto ou no diretório home:
   },
   "advanced": {
     "maxFileSize": 1024,
-    "excludePatterns": [
-      "*.log",
-      "*.tmp",
-      "node_modules/**",
-      ".git/**"
-    ],
+    "excludePatterns": ["*.log", "*.tmp", "node_modules/**", ".git/**"],
     "includePatterns": [],
     "enableDebug": false,
     "logLevel": "info"
@@ -163,6 +171,7 @@ Crie um arquivo `.commit-wizardrc` no seu projeto ou no diretório home:
 ```
 
 ### Gerar Configuração Exemplo
+
 ```bash
 commit-wizard --init   # Cria .commit-wizardrc exemplo
 ```
@@ -174,15 +183,17 @@ commit-wizard --init   # Cria .commit-wizardrc exemplo
 O Smart Split usa IA para analisar o contexto das suas mudanças e criar commits organizados logicamente.
 
 ### Como Funciona
+
 1. **Análise de Contexto**: IA analisa arquivos e diffs
 2. **Agrupamento Inteligente**: Agrupa por funcionalidade/correção
 3. **Interface de Edição**: Personaliza grupos antes do commit
 
 ### Exemplo de Uso
+
 ```bash
 # Você modificou:
 # src/auth/login.ts
-# src/auth/register.ts  
+# src/auth/register.ts
 # src/components/LoginForm.tsx
 # tests/auth.test.ts
 # docs/authentication.md
@@ -191,6 +202,7 @@ commit-wizard --smart-split
 ```
 
 **Resultado:**
+
 ```
 🧠 Análise de Contexto
 ✅ 3 grupo(s) identificado(s):
@@ -200,7 +212,7 @@ commit-wizard --smart-split
    💡 Implementação do core de autenticação
    🎯 Confiança: 95%
 
-2. **Interface de Autenticação**  
+2. **Interface de Autenticação**
    📄 src/components/LoginForm.tsx
    💡 Componentes de UI para autenticação
    🎯 Confiança: 90%
@@ -212,12 +224,13 @@ commit-wizard --smart-split
 
 ? O que você gostaria de fazer?
   ✅ Prosseguir com esta organização
-  ✏️ Editar grupos  
+  ✏️ Editar grupos
   ✋ Fazer split manual
   ❌ Cancelar
 ```
 
 ### Interface de Edição
+
 Se escolher "Editar grupos", você pode:
 
 - **📝 Renomear grupos** - Alterar nome e descrição
@@ -231,6 +244,7 @@ Se escolher "Editar grupos", você pode:
 ## 🎨 Estilos de Commit
 
 ### Conventional (Padrão)
+
 ```
 feat(auth): implement user login system
 
@@ -240,11 +254,13 @@ feat(auth): implement user login system
 ```
 
 ### Simple
+
 ```
 Add user login functionality
 ```
 
 ### Detailed
+
 ```
 Implement comprehensive user authentication system
 
@@ -278,6 +294,7 @@ export COMMIT_WIZARD_DRY_RUN="true"    # Sempre dry-run
 ## 📊 Exemplos Práticos
 
 ### Commit Único Simples
+
 ```bash
 # Modificou apenas README.md
 git add README.md
@@ -287,6 +304,7 @@ commit-wizard
 ```
 
 ### Smart Split para Feature Complexa
+
 ```bash
 # Implementou sistema completo de autenticação
 git add src/auth/ src/components/auth/ tests/auth/ docs/auth.md
@@ -295,11 +313,12 @@ commit-wizard --smart-split
 
 # Resultado: 3 commits organizados por contexto
 # 1. feat(auth): implement core authentication system
-# 2. feat(ui): add authentication components  
+# 2. feat(ui): add authentication components
 # 3. test(auth): add comprehensive auth tests
 ```
 
 ### Split Manual para Controle Total
+
 ```bash
 # Múltiplas mudanças não relacionadas
 git add .
@@ -314,6 +333,7 @@ commit-wizard --split
 ## 🧪 Desenvolvimento e Testes
 
 ### Executar Testes
+
 ```bash
 bun test                    # Todos os testes
 bun test src/__tests__      # Testes unitários
@@ -321,6 +341,7 @@ bun test tests/             # Testes de integração
 ```
 
 ### Desenvolvimento Local
+
 ```bash
 git clone https://github.com/seu-usuario/commit-wizard
 cd commit-wizard
@@ -329,6 +350,7 @@ bun run dev
 ```
 
 ### Build
+
 ```bash
 bun run build
 ```
@@ -348,29 +370,34 @@ bun run build
 ## 🐛 Troubleshooting
 
 ### Erro: "Chave da OpenAI não encontrada"
+
 ```bash
 export OPENAI_API_KEY="sua-chave-aqui"
 ```
 
 ### Erro: "Não é um repositório Git"
+
 ```bash
 git init
 ```
 
 ### Commits muito grandes/pequenos
+
 Ajuste no `.commit-wizardrc`:
+
 ```json
 {
   "openai": {
-    "maxTokens": 300  // Para commits maiores
+    "maxTokens": 300 // Para commits maiores
   },
   "prompt": {
-    "maxDiffSize": 16000  // Para diffs maiores
+    "maxDiffSize": 16000 // Para diffs maiores
   }
 }
 ```
 
 ### Smart Split não cria grupos
+
 - Verifique conexão com internet
 - Confirme que há arquivos staged
 - Tente com menos arquivos primeiro
@@ -394,13 +421,15 @@ MIT © [Seu Nome](https://github.com/seu-usuario)
 ## 🎯 Roadmap
 
 ### Próximas Funcionalidades
+
 - [ ] Cache inteligente de análises
-- [ ] Plugins personalizados  
+- [ ] Plugins personalizados
 - [ ] Integração com VS Code
 - [ ] Templates de commit customizados
 - [ ] Análise de impacto das mudanças
 
 ### Melhorias Planejadas
+
 - [ ] Suporte a mais idiomas
 - [ ] Interface gráfica opcional
 - [ ] Integração com CI/CD

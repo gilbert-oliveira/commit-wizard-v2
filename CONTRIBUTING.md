@@ -14,21 +14,24 @@ Obrigado por considerar contribuir para o commit-wizard! 🎉
 ### Setup Inicial
 
 1. **Fork o repositório**
+
    ```bash
    # Clone seu fork
    git clone https://github.com/seu-usuario/commit-wizard.git
    cd commit-wizard
-   
+
    # Adicione o repositório original como upstream
    git remote add upstream https://github.com/user/commit-wizard.git
    ```
 
 2. **Instale dependências**
+
    ```bash
    bun install
    ```
 
 3. **Execute testes**
+
    ```bash
    bun test
    ```
@@ -43,6 +46,7 @@ Obrigado por considerar contribuir para o commit-wizard! 🎉
 ### 1. Criar uma Issue
 
 Antes de começar a codar, crie uma issue descrevendo:
+
 - **Problema**: O que precisa ser corrigido
 - **Funcionalidade**: O que precisa ser implementado
 - **Melhoria**: Como pode ser melhorado
@@ -130,6 +134,7 @@ commit-wizard/
 ### Convenções de Código
 
 #### TypeScript
+
 ```typescript
 // ✅ Bom
 interface CommitConfig {
@@ -146,6 +151,7 @@ interface CommitConfig {
 ```
 
 #### Funções
+
 ```typescript
 // ✅ Bom
 export async function generateCommitMessage(
@@ -162,15 +168,16 @@ export async function gen(d: string, c: any): Promise<string> {
 ```
 
 #### Testes
+
 ```typescript
 // ✅ Bom
 describe('generateCommitMessage', () => {
   it('should generate message for feature changes', async () => {
     const diff = 'feat: add new feature';
     const config = { openai: { apiKey: 'test' } };
-    
+
     const result = await generateCommitMessage(diff, config);
-    
+
     expect(result).toContain('feat');
   });
 });
@@ -227,10 +234,10 @@ describe('CLI Integration', () => {
   it('should generate commit message', async () => {
     // Setup
     const tempDir = await createTempRepo();
-    
+
     // Action
     const result = await runCLI(['--dry-run'], { cwd: tempDir });
-    
+
     // Assert
     expect(result.exitCode).toBe(0);
     expect(result.stdout).toContain('commit message');
@@ -249,7 +256,7 @@ describe('CLI Integration', () => {
 
 ### Exemplo de JSDoc
 
-```typescript
+````typescript
 /**
  * Gera uma mensagem de commit usando OpenAI
  * @param diff - Diff do Git em formato string
@@ -270,7 +277,7 @@ export async function generateCommitMessage(
 ): Promise<string> {
   // implementação
 }
-```
+````
 
 ## 🔧 Scripts Úteis
 
@@ -298,6 +305,7 @@ bun run release:major # Release major
 ### Problemas Comuns
 
 **Build falha:**
+
 ```bash
 # Limpar cache
 rm -rf node_modules .bun
@@ -308,6 +316,7 @@ bun run tsc --noEmit
 ```
 
 **Testes falham:**
+
 ```bash
 # Executar testes específicos
 bun test tests/unit.test.ts
@@ -317,6 +326,7 @@ cat .commit-wizardrc
 ```
 
 **Lint falha:**
+
 ```bash
 # Formatar código
 bun run format
@@ -346,6 +356,7 @@ bun run type-check
 ## 🎉 Reconhecimento
 
 Contribuidores serão listados em:
+
 - [Contributors](https://github.com/user/commit-wizard/graphs/contributors)
 - [README.md](../README.md#contributors)
 - [CHANGELOG.md](../CHANGELOG.md)
@@ -362,4 +373,4 @@ Ao contribuir, você concorda que suas contribuições serão licenciadas sob a 
 
 ---
 
-**Obrigado por contribuir para o commit-wizard! 🚀** 
+**Obrigado por contribuir para o commit-wizard! 🚀**
