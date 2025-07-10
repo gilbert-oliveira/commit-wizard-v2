@@ -354,8 +354,36 @@ export async function handleSmartSplitMode(
     // Interface do usuário
     if (args.yes) {
       // Modo automático
-      const { executeCommit } = await import('../git/index.ts');
-      const commitResult = executeCommit(result.suggestion.message);
+      const { executeFileCommit } = await import('../git/index.ts');
+      let commitResult;
+      
+      // Fazer commit apenas dos arquivos do grupo atual
+      if (group.files.length === 1) {
+        commitResult = executeFileCommit(group.files[0], result.suggestion.message || '');
+      } else {
+        // Para múltiplos arquivos, usar commit normal mas com apenas os arquivos do grupo
+        const { execSync } = await import('child_process');
+        try {
+          // Fazer commit apenas dos arquivos do grupo
+          const filesArg = group.files.map(f => `"${f}"`).join(' ');
+          execSync(`git commit ${filesArg} -m "${(result.suggestion.message || '').replace(/"/g, '\\"')}"`, { 
+            stdio: 'pipe' 
+          });
+          
+          const hash = execSync('git rev-parse HEAD', { 
+            encoding: 'utf-8', 
+            stdio: 'pipe' 
+          }).trim();
+          
+          commitResult = { success: true, hash, message: result.suggestion.message || '' };
+        } catch (error) {
+          commitResult = { 
+            success: false, 
+            error: error instanceof Error ? error.message : 'Erro desconhecido ao executar commit'
+          };
+        }
+      }
+      
       showCommitResult(commitResult.success, commitResult.hash, commitResult.error);
     } else {
       // Modo interativo
@@ -365,16 +393,72 @@ export async function handleSmartSplitMode(
       
       switch (uiAction.action) {
         case 'commit':
-          const { executeCommit } = await import('../git/index.ts');
-          const commitResult = executeCommit(result.suggestion.message);
+          const { executeFileCommit } = await import('../git/index.ts');
+          let commitResult;
+          
+          // Fazer commit apenas dos arquivos do grupo atual
+          if (group.files.length === 1) {
+            commitResult = executeFileCommit(group.files[0], result.suggestion.message || '');
+          } else {
+            // Para múltiplos arquivos, usar commit normal mas com apenas os arquivos do grupo
+            const { execSync } = await import('child_process');
+            try {
+              // Fazer commit apenas dos arquivos do grupo
+              const filesArg = group.files.map(f => `"${f}"`).join(' ');
+              execSync(`git commit ${filesArg} -m "${(result.suggestion.message || '').replace(/"/g, '\\"')}"`, { 
+                stdio: 'pipe' 
+              });
+              
+              const hash = execSync('git rev-parse HEAD', { 
+                encoding: 'utf-8', 
+                stdio: 'pipe' 
+              }).trim();
+              
+              commitResult = { success: true, hash, message: result.suggestion.message || '' };
+            } catch (error) {
+              commitResult = { 
+                success: false, 
+                error: error instanceof Error ? error.message : 'Erro desconhecido ao executar commit'
+              };
+            }
+          }
+          
           showCommitResult(commitResult.success, commitResult.hash, commitResult.error);
           break;
           
         case 'edit':
           const editAction = await editCommitMessage(result.suggestion.message);
           if (editAction.action === 'commit' && editAction.message) {
-            const { executeCommit } = await import('../git/index.ts');
-            const editCommitResult = executeCommit(editAction.message);
+            const { executeFileCommit } = await import('../git/index.ts');
+            let editCommitResult;
+            
+            // Fazer commit apenas dos arquivos do grupo atual
+            if (group.files.length === 1) {
+              editCommitResult = executeFileCommit(group.files[0], editAction.message || '');
+            } else {
+              // Para múltiplos arquivos, usar commit normal mas com apenas os arquivos do grupo
+              const { execSync } = await import('child_process');
+              try {
+                // Fazer commit apenas dos arquivos do grupo
+                const filesArg = group.files.map(f => `"${f}"`).join(' ');
+                execSync(`git commit ${filesArg} -m "${(editAction.message || '').replace(/"/g, '\\"')}"`, { 
+                  stdio: 'pipe' 
+                });
+                
+                const hash = execSync('git rev-parse HEAD', { 
+                  encoding: 'utf-8', 
+                  stdio: 'pipe' 
+                }).trim();
+                
+                editCommitResult = { success: true, hash, message: editAction.message || '' };
+              } catch (error) {
+                editCommitResult = { 
+                  success: false, 
+                  error: error instanceof Error ? error.message : 'Erro desconhecido ao executar commit'
+                };
+              }
+            }
+            
             showCommitResult(editCommitResult.success, editCommitResult.hash, editCommitResult.error);
           }
           break;
