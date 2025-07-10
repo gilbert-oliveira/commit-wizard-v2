@@ -3,7 +3,6 @@ import {
   confirm, 
   log, 
   note,
-  cancel,
   isCancel,
   text,
   multiselect

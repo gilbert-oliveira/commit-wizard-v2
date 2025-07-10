@@ -96,7 +96,6 @@ function getStyleInstructions(style: string, language: string): string {
  * Extrai o tipo de commit da mensagem gerada pela OpenAI
  */
 export function extractCommitTypeFromMessage(message: string): CommitSuggestion['type'] | null {
-  const messageLower = message.toLowerCase();
   
   // Padrões para detectar tipos de commit
   const typePatterns = {

@@ -6,18 +6,13 @@ import {
   showCommitPreview, 
   editCommitMessage, 
   copyToClipboard, 
-  confirmCommit, 
   showCommitResult,
   showCancellation,
   selectFilesForCommit,
   askContinueCommits
 } from '../ui/index.ts';
 import { 
-  chooseSplitMode,
-  showSmartSplitGroups,
-  editSmartSplitGroups,
-  confirmGroupCommit,
-  showSmartSplitProgress
+  chooseSplitMode
 } from '../ui/smart-split.ts';
 import { handleSmartSplitMode } from './smart-split.ts';
 import type { CLIArgs } from '../utils/args.ts';

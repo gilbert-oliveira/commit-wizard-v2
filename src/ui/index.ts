@@ -20,8 +20,7 @@ export interface UIAction {
  * Exibe a mensagem gerada e permite interação do usuário
  */
 export async function showCommitPreview(
-  suggestion: CommitSuggestion,
-  config: Config
+  suggestion: CommitSuggestion
 ): Promise<UIAction> {
   
   // Exibir preview da mensagem
