@@ -18,7 +18,7 @@ export function parseArgs(args: string[]): CLIArgs {
     smartSplit: args.includes('--smart-split'),
     dryRun: args.includes('--dry-run') || args.includes('-n'),
     help: args.includes('--help') || args.includes('-h'),
-    version: args.includes('--version') || args.includes('-v')
+    version: args.includes('--version') || args.includes('-v'),
   };
 }
 
@@ -53,4 +53,4 @@ Para mais informações, visite: https://github.com/user/commit-wizard
 
 export function showVersion(): void {
   console.log('commit-wizard v1.0.0');
-} 
+}

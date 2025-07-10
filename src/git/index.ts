@@ -31,20 +31,21 @@ export function isGitRepository(): boolean {
 export function getGitStatus(): GitStatus {
   try {
     // Verificar arquivos staged
-    const stagedOutput = execSync('git diff --cached --name-only', { 
-      encoding: 'utf-8', 
-      stdio: 'pipe' 
+    const stagedOutput = execSync('git diff --cached --name-only', {
+      encoding: 'utf-8',
+      stdio: 'pipe',
     });
-    
+
     const stagedFiles = stagedOutput
       .trim()
       .split('\n')
-      .filter(file => file.length > 0);
+      .filter((file) => file.length > 0);
 
     // Obter diff dos arquivos staged
-    const diff = stagedFiles.length > 0 
-      ? execSync('git diff --cached', { encoding: 'utf-8', stdio: 'pipe' })
-      : '';
+    const diff =
+      stagedFiles.length > 0
+        ? execSync('git diff --cached', { encoding: 'utf-8', stdio: 'pipe' })
+        : '';
 
     return {
       hasStaged: stagedFiles.length > 0,
@@ -52,7 +53,9 @@ export function getGitStatus(): GitStatus {
       diff: diff.trim(),
     };
   } catch (error) {
-    throw new Error(`Erro ao obter status do Git: ${error instanceof Error ? error.message : 'Erro desconhecido'}`);
+    throw new Error(
+      `Erro ao obter status do Git: ${error instanceof Error ? error.message : 'Erro desconhecido'}`
+    );
   }
 }
 
@@ -61,12 +64,14 @@ export function getGitStatus(): GitStatus {
  */
 export function getFileDiff(filename: string): string {
   try {
-    return execSync(`git diff --cached -- "${filename}"`, { 
-      encoding: 'utf-8', 
-      stdio: 'pipe' 
+    return execSync(`git diff --cached -- "${filename}"`, {
+      encoding: 'utf-8',
+      stdio: 'pipe',
     });
   } catch (error) {
-    throw new Error(`Erro ao obter diff do arquivo ${filename}: ${error instanceof Error ? error.message : 'Erro desconhecido'}`);
+    throw new Error(
+      `Erro ao obter diff do arquivo ${filename}: ${error instanceof Error ? error.message : 'Erro desconhecido'}`
+    );
   }
 }
 
@@ -76,14 +81,14 @@ export function getFileDiff(filename: string): string {
 export function executeCommit(message: string): GitCommitResult {
   try {
     // Executar commit
-    execSync(`git commit -m "${message.replace(/"/g, '\\"')}"`, { 
-      stdio: 'pipe' 
+    execSync(`git commit -m "${message.replace(/"/g, '\\"')}"`, {
+      stdio: 'pipe',
     });
 
     // Obter hash do commit
-    const hash = execSync('git rev-parse HEAD', { 
-      encoding: 'utf-8', 
-      stdio: 'pipe' 
+    const hash = execSync('git rev-parse HEAD', {
+      encoding: 'utf-8',
+      stdio: 'pipe',
     }).trim();
 
     return {
@@ -94,7 +99,10 @@ export function executeCommit(message: string): GitCommitResult {
   } catch (error) {
     return {
       success: false,
-      error: error instanceof Error ? error.message : 'Erro desconhecido ao executar commit',
+      error:
+        error instanceof Error
+          ? error.message
+          : 'Erro desconhecido ao executar commit',
     };
   }
 }
@@ -102,17 +110,20 @@ export function executeCommit(message: string): GitCommitResult {
 /**
  * Executa commit de arquivo específico
  */
-export function executeFileCommit(filename: string, message: string): GitCommitResult {
+export function executeFileCommit(
+  filename: string,
+  message: string
+): GitCommitResult {
   try {
     // Commit apenas do arquivo específico
-    execSync(`git commit "${filename}" -m "${message.replace(/"/g, '\\"')}"`, { 
-      stdio: 'pipe' 
+    execSync(`git commit "${filename}" -m "${message.replace(/"/g, '\\"')}"`, {
+      stdio: 'pipe',
     });
 
     // Obter hash do commit
-    const hash = execSync('git rev-parse HEAD', { 
-      encoding: 'utf-8', 
-      stdio: 'pipe' 
+    const hash = execSync('git rev-parse HEAD', {
+      encoding: 'utf-8',
+      stdio: 'pipe',
     }).trim();
 
     return {
@@ -123,7 +134,10 @@ export function executeFileCommit(filename: string, message: string): GitCommitR
   } catch (error) {
     return {
       success: false,
-      error: error instanceof Error ? error.message : 'Erro desconhecido ao executar commit do arquivo',
+      error:
+        error instanceof Error
+          ? error.message
+          : 'Erro desconhecido ao executar commit do arquivo',
     };
   }
 }
@@ -131,25 +145,33 @@ export function executeFileCommit(filename: string, message: string): GitCommitR
 /**
  * Obtém estatísticas do diff (linhas adicionadas/removidas)
  */
-export function getDiffStats(): { added: number; removed: number; files: number } {
+export function getDiffStats(): {
+  added: number;
+  removed: number;
+  files: number;
+} {
   try {
-    const output = execSync('git diff --cached --numstat', { 
-      encoding: 'utf-8', 
-      stdio: 'pipe' 
+    const output = execSync('git diff --cached --numstat', {
+      encoding: 'utf-8',
+      stdio: 'pipe',
     });
 
-    const lines = output.trim().split('\n').filter(line => line.length > 0);
+    const lines = output
+      .trim()
+      .split('\n')
+      .filter((line) => line.length > 0);
     let added = 0;
     let removed = 0;
 
-    lines.forEach(line => {
+    lines.forEach((line) => {
       const [addedStr, removedStr] = line.split('\t');
       if (addedStr && addedStr !== '-') added += parseInt(addedStr) || 0;
-      if (removedStr && removedStr !== '-') removed += parseInt(removedStr) || 0;
+      if (removedStr && removedStr !== '-')
+        removed += parseInt(removedStr) || 0;
     });
 
     return { added, removed, files: lines.length };
   } catch {
     return { added: 0, removed: 0, files: 0 };
   }
-} 
+}

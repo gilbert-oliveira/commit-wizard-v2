@@ -1,4 +1,5 @@
 import { existsSync, readFileSync } from 'fs';
+import fs from 'fs';
 import { join } from 'path';
 import dotenv from 'dotenv';
 
@@ -58,18 +59,33 @@ const DEFAULT_CONFIG: Config = {
   },
 };
 
+// Adicionar interface para userConfig
+interface UserConfig {
+  openai?: Partial<Config['openai']>;
+  language?: string;
+  commitStyle?: Config['commitStyle'];
+  autoCommit?: boolean;
+  splitCommits?: boolean;
+  dryRun?: boolean;
+  smartSplit?: Partial<Config['smartSplit']>;
+  cache?: Partial<Config['cache']>;
+}
+
 export function loadConfig(configPath?: string): Config {
   // Usar um caminho mais seguro para ambientes CI
   let defaultConfigPath: string;
   try {
     defaultConfigPath = join(process.cwd(), '.commit-wizardrc');
-  } catch (error) {
+  } catch {
     // Fallback para ambientes onde process.cwd() falha
     defaultConfigPath = '/tmp/.commit-wizardrc';
   }
-  
-  const globalConfigPath = join(process.env.HOME || process.env.USERPROFILE || '/tmp', '.commit-wizardrc');
-  
+
+  const globalConfigPath = join(
+    process.env.HOME || process.env.USERPROFILE || '/tmp',
+    '.commit-wizardrc'
+  );
+
   let config = { ...DEFAULT_CONFIG };
 
   // Carregar configuração global primeiro
@@ -79,8 +95,8 @@ export function loadConfig(configPath?: string): Config {
       const globalConfig = JSON.parse(fileContent);
       config = mergeConfig(config, globalConfig);
     }
-  } catch (error) {
-    console.warn(`⚠️  Erro ao ler configuração global: ${error instanceof Error ? error.message : 'Erro desconhecido'}`);
+  } catch {
+    console.warn(`⚠️  Erro ao ler configuração global: Erro desconhecido`);
   }
 
   // Carregar configuração local (sobrescreve a global)
@@ -91,8 +107,8 @@ export function loadConfig(configPath?: string): Config {
       const userConfig = JSON.parse(fileContent);
       config = mergeConfig(config, userConfig);
     }
-  } catch (error) {
-    console.warn(`⚠️  Erro ao ler .commit-wizardrc: ${error instanceof Error ? error.message : 'Erro desconhecido'}`);
+  } catch {
+    console.warn(`⚠️  Erro ao ler .commit-wizardrc: Erro desconhecido`);
   }
 
   // Adicionar chave da OpenAI das variáveis de ambiente
@@ -111,7 +127,7 @@ export function loadConfig(configPath?: string): Config {
   return config;
 }
 
-function mergeConfig(defaultConfig: Config, userConfig: any): Config {
+function mergeConfig(defaultConfig: Config, userConfig: UserConfig): Config {
   return {
     ...defaultConfig,
     ...userConfig,
@@ -146,8 +162,14 @@ export function validateConfig(config: Config): string[] {
     errors.push('temperature deve estar entre 0 e 2');
   }
 
-  if (!['pt', 'en', 'es', 'fr', 'de', 'it', 'ja', 'ko', 'zh'].includes(config.language)) {
-    errors.push('language deve ser um idioma suportado (pt, en, es, fr, de, it, ja, ko, zh)');
+  if (
+    !['pt', 'en', 'es', 'fr', 'de', 'it', 'ja', 'ko', 'zh'].includes(
+      config.language
+    )
+  ) {
+    errors.push(
+      'language deve ser um idioma suportado (pt, en, es, fr, de, it, ja, ko, zh)'
+    );
   }
 
   if (!['conventional', 'simple', 'detailed'].includes(config.commitStyle)) {
@@ -163,7 +185,10 @@ export function validateConfig(config: Config): string[] {
     errors.push('smartSplit.maxGroups deve estar entre 1 e 10');
   }
 
-  if (config.smartSplit.confidenceThreshold < 0 || config.smartSplit.confidenceThreshold > 1) {
+  if (
+    config.smartSplit.confidenceThreshold < 0 ||
+    config.smartSplit.confidenceThreshold > 1
+  ) {
     errors.push('smartSplit.confidenceThreshold deve estar entre 0 e 1');
   }
 
@@ -193,20 +218,20 @@ export function createExampleConfig(path: string = '.commit-wizardrc'): void {
       maxTokens: 200,
       temperature: 0.7,
       timeout: 30000,
-      retries: 2
+      retries: 2,
     },
     smartSplit: {
       enabled: true,
       minGroupSize: 1,
       maxGroups: 5,
-      confidenceThreshold: 0.7
+      confidenceThreshold: 0.7,
     },
     cache: {
       enabled: true,
       ttl: 60,
-      maxSize: 100
-    }
+      maxSize: 100,
+    },
   };
 
-  require('fs').writeFileSync(path, JSON.stringify(exampleConfig, null, 2));
-} 
+  fs.writeFileSync(path, JSON.stringify(exampleConfig, null, 2));
+}

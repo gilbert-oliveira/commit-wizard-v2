@@ -1,5 +1,6 @@
 import type { Config } from '../config/index.ts';
 import type { FileGroup } from './smart-split.ts';
+import crypto from 'crypto';
 
 export interface CacheEntry {
   groups: FileGroup[];
@@ -24,15 +25,17 @@ class AnalysisCache {
    * Gera hash do contexto para identificar análises similares
    */
   private generateHash(files: string[], overallDiff: string): string {
-    const crypto = require('crypto');
     const context = {
       files: files.sort(), // Ordenar para consistência
       diff: overallDiff.substring(0, 1000), // Limitar tamanho do diff
       model: this.config.openai.model,
-      temperature: this.config.openai.temperature
+      temperature: this.config.openai.temperature,
     };
-    
-    return crypto.createHash('md5').update(JSON.stringify(context)).digest('hex');
+
+    return crypto
+      .createHash('md5')
+      .update(JSON.stringify(context))
+      .digest('hex');
   }
 
   /**
@@ -53,7 +56,7 @@ class AnalysisCache {
     // Verificar se o cache expirou
     const now = Date.now();
     const ttlMs = this.config.cache.ttl * 60 * 1000; // Converter minutos para ms
-    
+
     if (now - entry.timestamp > ttlMs) {
       this.cache.delete(hash);
       return { hit: false };
@@ -84,7 +87,7 @@ class AnalysisCache {
     const entry: CacheEntry = {
       groups,
       timestamp: Date.now(),
-      hash
+      hash,
     };
 
     this.cache.set(hash, entry);
@@ -96,7 +99,7 @@ class AnalysisCache {
   private cleanup(): void {
     const now = Date.now();
     const ttlMs = this.config.cache.ttl * 60 * 1000;
-    
+
     // Remover entradas expiradas
     for (const [hash, entry] of this.cache.entries()) {
       if (now - entry.timestamp > ttlMs) {
@@ -106,11 +109,15 @@ class AnalysisCache {
 
     // Se ainda exceder tamanho máximo, remover entradas mais antigas
     if (this.cache.size >= this.config.cache.maxSize) {
-      const entries = Array.from(this.cache.entries())
-        .sort((a, b) => a[1].timestamp - b[1].timestamp);
-      
+      const entries = Array.from(this.cache.entries()).sort(
+        (a, b) => a[1].timestamp - b[1].timestamp
+      );
+
       // Remover 50% das entradas mais antigas para garantir espaço
-      const toRemove = entries.slice(0, Math.ceil(this.config.cache.maxSize * 0.5));
+      const toRemove = entries.slice(
+        0,
+        Math.ceil(this.config.cache.maxSize * 0.5)
+      );
       for (const [hash] of toRemove) {
         this.cache.delete(hash);
       }
@@ -131,7 +138,7 @@ class AnalysisCache {
     return {
       size: this.cache.size,
       maxSize: this.config.cache.maxSize,
-      enabled: this.config.cache.enabled
+      enabled: this.config.cache.enabled,
     };
   }
 }
@@ -156,7 +163,10 @@ export function getCache(): AnalysisCache | null {
 /**
  * Verifica se há cache válido para o contexto
  */
-export function getCachedAnalysis(files: string[], overallDiff: string): CacheResult {
+export function getCachedAnalysis(
+  files: string[],
+  overallDiff: string
+): CacheResult {
   const cache = getCache();
   return cache ? cache.get(files, overallDiff) : { hit: false };
 }
@@ -164,7 +174,11 @@ export function getCachedAnalysis(files: string[], overallDiff: string): CacheRe
 /**
  * Armazena resultado no cache
  */
-export function setCachedAnalysis(files: string[], overallDiff: string, groups: FileGroup[]): void {
+export function setCachedAnalysis(
+  files: string[],
+  overallDiff: string,
+  groups: FileGroup[]
+): void {
   const cache = getCache();
   if (cache) {
     cache.set(files, overallDiff, groups);
@@ -174,7 +188,11 @@ export function setCachedAnalysis(files: string[], overallDiff: string, groups: 
 /**
  * Retorna estatísticas do cache
  */
-export function getCacheStats(): { size: number; maxSize: number; enabled: boolean } | null {
+export function getCacheStats(): {
+  size: number;
+  maxSize: number;
+  enabled: boolean;
+} | null {
   const cache = getCache();
   return cache ? cache.getStats() : null;
 }
@@ -189,4 +207,4 @@ export function clearCache(): void {
   }
   // Resetar a instância global
   globalCache = null;
-} 
+}

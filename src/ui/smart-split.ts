@@ -1,12 +1,4 @@
-import { 
-  select, 
-  confirm, 
-  log, 
-  note,
-  isCancel,
-  text,
-  multiselect
-} from '@clack/prompts';
+import { select, confirm, log, note, isCancel } from '@clack/prompts';
 import type { FileGroup } from '../core/smart-split.ts';
 
 export interface SmartSplitAction {
@@ -24,19 +16,19 @@ export async function chooseSplitMode(): Promise<SmartSplitAction> {
       {
         value: 'smart',
         label: '🧠 Smart Split (Recomendado)',
-        hint: 'IA analisa contexto e agrupa automaticamente'
+        hint: 'IA analisa contexto e agrupa automaticamente',
       },
       {
         value: 'manual',
         label: '✋ Split Manual',
-        hint: 'Você escolhe arquivos manualmente'
+        hint: 'Você escolhe arquivos manualmente',
       },
       {
         value: 'cancel',
         label: '❌ Cancelar',
-        hint: 'Voltar ao modo normal'
-      }
-    ]
+        hint: 'Voltar ao modo normal',
+      },
+    ],
   });
 
   if (isCancel(mode)) {
@@ -57,15 +49,20 @@ export async function chooseSplitMode(): Promise<SmartSplitAction> {
 /**
  * Exibe os grupos identificados pela IA
  */
-export async function showSmartSplitGroups(groups: FileGroup[]): Promise<SmartSplitAction> {
+export async function showSmartSplitGroups(
+  groups: FileGroup[]
+): Promise<SmartSplitAction> {
   note(
     `Identificamos ${groups.length} grupo(s) lógico(s) para seus commits:\n\n` +
-    groups.map((group, index) => 
-      `${index + 1}. **${group.name}**\n` +
-      `   📄 ${group.files.join(', ')}\n` +
-      `   💡 ${group.description}\n` +
-      `   🎯 Confiança: ${Math.round(group.confidence * 100)}%`
-    ).join('\n\n'),
+      groups
+        .map(
+          (group, index) =>
+            `${index + 1}. **${group.name}**\n` +
+            `   📄 ${group.files.join(', ')}\n` +
+            `   💡 ${group.description}\n` +
+            `   🎯 Confiança: ${Math.round(group.confidence * 100)}%`
+        )
+        .join('\n\n'),
     '🧠 Análise de Contexto'
   );
 
@@ -75,19 +72,19 @@ export async function showSmartSplitGroups(groups: FileGroup[]): Promise<SmartSp
       {
         value: 'proceed',
         label: '✅ Prosseguir com esta organização',
-        hint: 'Usar os grupos como sugeridos pela IA'
+        hint: 'Usar os grupos como sugeridos pela IA',
       },
       {
         value: 'manual',
         label: '✋ Fazer split manual',
-        hint: 'Escolher arquivos manualmente'
+        hint: 'Escolher arquivos manualmente',
       },
       {
         value: 'cancel',
         label: '❌ Cancelar',
-        hint: 'Voltar ao modo normal'
-      }
-    ]
+        hint: 'Voltar ao modo normal',
+      },
+    ],
   });
 
   if (isCancel(action)) {
@@ -104,16 +101,19 @@ export async function showSmartSplitGroups(groups: FileGroup[]): Promise<SmartSp
 /**
  * Interface para confirmar commit de um grupo
  */
-export async function confirmGroupCommit(group: FileGroup, message: string): Promise<boolean> {
+export async function confirmGroupCommit(
+  group: FileGroup,
+  message: string
+): Promise<boolean> {
   note(
     `**Grupo:** ${group.name}\n` +
-    `**Arquivos:** ${group.files.join(', ')}\n` +
-    `**Mensagem:** "${message}"`,
+      `**Arquivos:** ${group.files.join(', ')}\n` +
+      `**Mensagem:** "${message}"`,
     '🚀 Confirmar Commit do Grupo'
   );
 
   const confirmed = await confirm({
-    message: `Fazer commit para "${group.name}"?`
+    message: `Fazer commit para "${group.name}"?`,
   });
 
   if (isCancel(confirmed)) {
@@ -126,10 +126,16 @@ export async function confirmGroupCommit(group: FileGroup, message: string): Pro
 /**
  * Interface para mostrar progresso do smart split
  */
-export function showSmartSplitProgress(current: number, total: number, groupName: string): void {
+export function showSmartSplitProgress(
+  current: number,
+  total: number,
+  groupName: string
+): void {
   const progress = Math.round((current / total) * 100);
-  const bar = '█'.repeat(Math.floor(progress / 10)) + '░'.repeat(10 - Math.floor(progress / 10));
-  
+  const bar =
+    '█'.repeat(Math.floor(progress / 10)) +
+    '░'.repeat(10 - Math.floor(progress / 10));
+
   log.info(`🔄 Progresso: [${bar}] ${progress}% (${current}/${total})`);
   log.info(`📋 Processando: ${groupName}`);
-} 
+}

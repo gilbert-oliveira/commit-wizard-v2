@@ -1,15 +1,14 @@
-import { 
-  text, 
-  select, 
-  confirm, 
-  log, 
+import {
+  text,
+  select,
+  confirm,
+  log,
   note,
   cancel,
-  isCancel 
+  isCancel,
 } from '@clack/prompts';
 import clipboardy from 'clipboardy';
 import type { CommitSuggestion } from '../core/openai.ts';
-import type { Config } from '../config/index.ts';
 
 export interface UIAction {
   action: 'commit' | 'edit' | 'copy' | 'cancel';
@@ -22,7 +21,6 @@ export interface UIAction {
 export async function showCommitPreview(
   suggestion: CommitSuggestion
 ): Promise<UIAction> {
-  
   // Exibir preview da mensagem
   note(
     `Tipo: ${suggestion.type}\nMensagem: "${suggestion.message}"`,
@@ -36,37 +34,39 @@ export async function showCommitPreview(
       {
         value: 'commit',
         label: '✅ Fazer commit com esta mensagem',
-        hint: 'Executar git commit imediatamente'
+        hint: 'Executar git commit imediatamente',
       },
       {
         value: 'edit',
         label: '✏️  Editar mensagem',
-        hint: 'Modificar a mensagem antes de commitar'
+        hint: 'Modificar a mensagem antes de commitar',
       },
       {
         value: 'copy',
         label: '📋 Copiar para clipboard',
-        hint: 'Copiar mensagem e sair sem commitar'
+        hint: 'Copiar mensagem e sair sem commitar',
       },
       {
         value: 'cancel',
         label: '❌ Cancelar',
-        hint: 'Sair sem fazer nada'
-      }
-    ]
+        hint: 'Sair sem fazer nada',
+      },
+    ],
   });
 
   if (isCancel(action)) {
     return { action: 'cancel' };
   }
 
-  return { action: action as any };
+  return { action: action as UIAction['action'] };
 }
 
 /**
  * Permite edição da mensagem de commit
  */
-export async function editCommitMessage(originalMessage: string): Promise<UIAction> {
+export async function editCommitMessage(
+  originalMessage: string
+): Promise<UIAction> {
   const editedMessage = await text({
     message: 'Edite a mensagem do commit:',
     initialValue: originalMessage,
@@ -78,7 +78,7 @@ export async function editCommitMessage(originalMessage: string): Promise<UIActi
       if (value.trim().length > 72) {
         return 'A mensagem está muito longa (máximo 72 caracteres recomendado)';
       }
-    }
+    },
   });
 
   if (isCancel(editedMessage)) {
@@ -86,16 +86,16 @@ export async function editCommitMessage(originalMessage: string): Promise<UIActi
   }
 
   const confirmEdit = await confirm({
-    message: `Confirma a mensagem editada: "${editedMessage}"?`
+    message: `Confirma a mensagem editada: "${editedMessage}"?`,
   });
 
   if (isCancel(confirmEdit) || !confirmEdit) {
     return { action: 'cancel' };
   }
 
-  return { 
-    action: 'commit', 
-    message: editedMessage 
+  return {
+    action: 'commit',
+    message: editedMessage,
   };
 }
 
@@ -108,7 +108,9 @@ export async function copyToClipboard(message: string): Promise<boolean> {
     log.success('✅ Mensagem copiada para a área de transferência!');
     return true;
   } catch (error) {
-    log.error(`❌ Erro ao copiar: ${error instanceof Error ? error.message : 'Erro desconhecido'}`);
+    log.error(
+      `❌ Erro ao copiar: ${error instanceof Error ? error.message : 'Erro desconhecido'}`
+    );
     return false;
   }
 }
@@ -117,13 +119,10 @@ export async function copyToClipboard(message: string): Promise<boolean> {
  * Confirma execução do commit
  */
 export async function confirmCommit(message: string): Promise<boolean> {
-  note(
-    `"${message}"`,
-    '🚀 Confirmar Commit'
-  );
+  note(`"${message}"`, '🚀 Confirmar Commit');
 
   const confirmed = await confirm({
-    message: 'Executar o commit agora?'
+    message: 'Executar o commit agora?',
   });
 
   if (isCancel(confirmed)) {
@@ -136,7 +135,11 @@ export async function confirmCommit(message: string): Promise<boolean> {
 /**
  * Exibe resultado do commit
  */
-export function showCommitResult(success: boolean, hash?: string, error?: string) {
+export function showCommitResult(
+  success: boolean,
+  hash?: string,
+  error?: string
+) {
   if (success && hash) {
     log.success(`✅ Commit realizado com sucesso!`);
     log.info(`🔗 Hash: ${hash.substring(0, 8)}`);
@@ -150,44 +153,46 @@ export function showCommitResult(success: boolean, hash?: string, error?: string
  */
 export async function selectFilesForCommit(files: string[]): Promise<string[]> {
   log.info('📋 Modo Split: Selecione os arquivos para este commit');
-  
+
   const selectedFiles: string[] = [];
-  
+
   for (const file of files) {
     const include = await confirm({
-      message: `Incluir "${file}" neste commit?`
+      message: `Incluir "${file}" neste commit?`,
     });
-    
+
     if (isCancel(include)) {
       break;
     }
-    
+
     if (include) {
       selectedFiles.push(file);
     }
   }
-  
+
   return selectedFiles;
 }
 
 /**
  * Confirma se usuário quer continuar com mais commits
  */
-export async function askContinueCommits(remainingFiles: string[]): Promise<boolean> {
+export async function askContinueCommits(
+  remainingFiles: string[]
+): Promise<boolean> {
   if (remainingFiles.length === 0) {
     return false;
   }
-  
+
   log.info(`📄 Arquivos restantes: ${remainingFiles.join(', ')}`);
-  
+
   const continueCommits = await confirm({
-    message: 'Gerar commit para os arquivos restantes?'
+    message: 'Gerar commit para os arquivos restantes?',
   });
-  
+
   if (isCancel(continueCommits)) {
     return false;
   }
-  
+
   return continueCommits;
 }
 
@@ -196,4 +201,4 @@ export async function askContinueCommits(remainingFiles: string[]): Promise<bool
  */
 export function showCancellation() {
   cancel('Operação cancelada pelo usuário');
-} 
+}
