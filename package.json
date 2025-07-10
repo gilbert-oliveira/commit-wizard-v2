@@ -28,16 +28,16 @@
     "type-check": "bun run tsc --noEmit"
   },
   "keywords": ["git", "commit", "ai", "openai", "cli", "automation", "conventional-commits"],
-  "author": "Gilbert <gilbert@example.com>",
+  "author": "Gilbert <contato@gilbert.dev.br>",
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/user/commit-wizard.git"
+    "url": "https://github.com/gilbert-oliveira/commit-wizard-v2.git"
   },
   "bugs": {
-    "url": "https://github.com/user/commit-wizard/issues"
+    "url": "https://github.com/gilbert-oliveira/commit-wizard-v2/issues"
   },
-  "homepage": "https://github.com/user/commit-wizard#readme",
+  "homepage": "https://github.com/gilbert-oliveira/commit-wizard-v2#readme",
   "engines": {
     "node": ">=18.0.0",
     "bun": ">=1.0.0"
