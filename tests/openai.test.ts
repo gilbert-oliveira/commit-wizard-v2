@@ -3,8 +3,8 @@ import {
   buildPrompt, 
   extractCommitTypeFromMessage, 
   detectCommitType 
-} from '../core/openai.ts';
-import type { Config } from '../config/index.ts';
+} from '../src/core/openai.ts';
+import type { Config } from '../src/config/index.ts';
 
 describe('OpenAI Module', () => {
   const mockConfig: Config = {
@@ -21,43 +21,11 @@ describe('OpenAI Module', () => {
     autoCommit: false,
     splitCommits: false,
     dryRun: false,
-    prompt: {
-      includeFileNames: true,
-      includeDiffStats: true,
-      customInstructions: '',
-      maxDiffSize: 8000
-    },
     smartSplit: {
       enabled: true,
       minGroupSize: 1,
       maxGroups: 5,
-      autoEdit: false,
-      confidenceThreshold: 0.7,
-      preferredGroupTypes: ['feat', 'fix', 'refactor', 'test', 'docs']
-    },
-    ui: {
-      theme: 'auto',
-      showProgress: true,
-      animateProgress: true,
-      compactMode: false
-    },
-    cache: {
-      enabled: true,
-      ttl: 60,
-      maxSize: 100
-    },
-    hooks: {
-      preCommit: [],
-      postCommit: [],
-      preGenerate: [],
-      postGenerate: []
-    },
-    advanced: {
-      maxFileSize: 1024,
-      excludePatterns: ['*.log', '*.tmp'],
-      includePatterns: [],
-      enableDebug: false,
-      logLevel: 'info'
+      confidenceThreshold: 0.7
     }
   };
 
@@ -85,22 +53,6 @@ describe('OpenAI Module', () => {
       expect(prompt).toContain('conventional');
       expect(prompt).toContain('test.js');
       expect(prompt).toContain(diff);
-    });
-
-    it('should include custom instructions when provided', () => {
-      const customConfig = { 
-        ...mockConfig, 
-        prompt: { 
-          ...mockConfig.prompt, 
-          customInstructions: 'Always use emojis' 
-        } 
-      };
-      const diff = '+console.log("test");';
-      const filenames = ['test.js'];
-      
-      const prompt = buildPrompt(diff, customConfig, filenames);
-      
-      expect(prompt).toContain('Always use emojis');
     });
   });
 

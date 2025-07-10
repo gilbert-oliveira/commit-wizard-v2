@@ -24,7 +24,6 @@ export function buildPrompt(diff: string, config: Config, filenames: string[]): 
 CONTEXTO:
 - Idioma: ${language}
 - Estilo: ${config.commitStyle}
-${config.prompt.customInstructions ? `- Instruções customizadas: ${config.prompt.customInstructions}` : ''}
 
 ARQUIVOS MODIFICADOS:
 ${filenames.map(file => `- ${file}`).join('\n')}
