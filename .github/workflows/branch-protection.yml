@@ -1,8 +1,13 @@
 name: Configurar Proteções de Branch
 
+
 on:
   push:
     branches: [ main, develop ]
+
+permissions:
+  contents: write
+  actions: write
 
 jobs:
   setup-branch-protection:
