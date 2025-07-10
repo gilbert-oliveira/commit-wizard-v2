@@ -399,7 +399,7 @@ async function mergeGroups(groups: FileGroup[]): Promise<FileGroup[]> {
 
   const newName = await text({
     message: 'Nome do grupo mesclado:',
-    placeholder: selectedGroups[0].name,
+    placeholder: selectedGroups[0]?.name || 'Grupo mesclado',
     validate: (value) => {
       if (!value || value.trim().length === 0) {
         return 'Nome não pode ser vazio';

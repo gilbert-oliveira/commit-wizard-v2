@@ -382,7 +382,7 @@ export async function handleSmartSplitMode(
       let commitResult;
       
       // Fazer commit apenas dos arquivos do grupo atual
-      if (group.files.length === 1) {
+      if (group.files.length === 1 && group.files[0]) {
         commitResult = executeFileCommit(group.files[0], result.suggestion.message || '');
       } else {
         // Para múltiplos arquivos, usar commit normal mas com apenas os arquivos do grupo
@@ -422,7 +422,7 @@ export async function handleSmartSplitMode(
           
           // Fazer commit apenas dos arquivos do grupo atual
           const commitMessage = result.suggestion.message || 'Atualização de arquivos';
-          if (group.files.length === 1) {
+          if (group.files.length === 1 && group.files[0]) {
             commitResult = executeFileCommit(group.files[0], commitMessage);
           } else {
             // Para múltiplos arquivos, usar commit normal mas com apenas os arquivos do grupo
@@ -458,7 +458,7 @@ export async function handleSmartSplitMode(
             let editCommitResult;
             
             // Fazer commit apenas dos arquivos do grupo atual
-            if (group.files.length === 1) {
+            if (group.files.length === 1 && group.files[0]) {
               editCommitResult = executeFileCommit(group.files[0], editAction.message || '');
             } else {
               // Para múltiplos arquivos, usar commit normal mas com apenas os arquivos do grupo
