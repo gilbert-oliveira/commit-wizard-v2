@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach, afterEach } from 'bun:test';
-import { loadConfig, validateConfig, type Config } from '../config/index.ts';
+import { loadConfig, validateConfig, type Config } from '../src/config/index.ts';
 import { unlinkSync, existsSync } from 'fs';
 
 describe('Config Module', () => {
@@ -40,11 +40,11 @@ describe('Config Module', () => {
       expect(config.splitCommits).toBe(false);
       expect(config.dryRun).toBe(false);
       
-      // Verificar novas propriedades
+      // Verificar propriedades do smartSplit
       expect(config.smartSplit.enabled).toBe(true);
-      expect(config.ui.theme).toBe('auto');
-      expect(config.cache.enabled).toBe(true);
-      expect(config.advanced.enableDebug).toBe(false);
+      expect(config.smartSplit.minGroupSize).toBe(1);
+      expect(config.smartSplit.maxGroups).toBe(5);
+      expect(config.smartSplit.confidenceThreshold).toBe(0.7);
     });
 
     it('should merge user config with default config', () => {
@@ -81,7 +81,9 @@ describe('Config Module', () => {
         commitStyle: 'invalid' as any, // Invalid style
         smartSplit: {
           ...validConfig.smartSplit,
-          maxGroups: 15 // Invalid: too high
+          maxGroups: 15, // Invalid: too high
+          minGroupSize: 0, // Invalid: too low
+          confidenceThreshold: 1.5 // Invalid: too high
         }
       };
       
@@ -93,6 +95,8 @@ describe('Config Module', () => {
       expect(errors.some(error => error.includes('language deve ser um idioma suportado'))).toBe(true);
       expect(errors.some(error => error.includes('commitStyle deve ser conventional'))).toBe(true);
       expect(errors.some(error => error.includes('maxGroups deve estar entre 1 e 10'))).toBe(true);
+      expect(errors.some(error => error.includes('minGroupSize deve ser pelo menos 1'))).toBe(true);
+      expect(errors.some(error => error.includes('confidenceThreshold deve estar entre 0 e 1'))).toBe(true);
     });
 
     it('should return no errors for valid config', () => {

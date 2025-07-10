@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'bun:test';
-import { parseArgs } from '../utils/args.ts';
+import { parseArgs } from '../src/utils/args.ts';
 
 describe('Args Module', () => {
   describe('parseArgs', () => {
