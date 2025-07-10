@@ -42,14 +42,15 @@ const DEFAULT_CONFIG: Config = {
   },
 };
 
-export function loadConfig(): Config {
-  const configPath = join(process.cwd(), '.commit-wizardrc');
+export function loadConfig(configPath?: string): Config {
+  const defaultConfigPath = join(process.cwd(), '.commit-wizardrc');
+  const actualConfigPath = configPath || defaultConfigPath;
   let config = { ...DEFAULT_CONFIG };
 
   // Carregar configuração do arquivo
-  if (existsSync(configPath)) {
+  if (existsSync(actualConfigPath)) {
     try {
-      const fileContent = readFileSync(configPath, 'utf-8');
+      const fileContent = readFileSync(actualConfigPath, 'utf-8');
       const userConfig = JSON.parse(fileContent);
       config = mergeConfig(config, userConfig);
     } catch (error) {

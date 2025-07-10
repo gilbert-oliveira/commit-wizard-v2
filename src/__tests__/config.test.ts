@@ -21,7 +21,8 @@ describe('Config Module', () => {
 
   describe('loadConfig', () => {
     it('should load default config when no file exists', () => {
-      const config = loadConfig();
+      // Usar um caminho inexistente para garantir que carregue os defaults
+      const config = loadConfig('arquivo-inexistente.json');
       
       expect(config.openai.model).toBe('gpt-4o');
       expect(config.language).toBe('pt');
@@ -41,9 +42,10 @@ describe('Config Module', () => {
         }
       };
       
-      writeFileSync('.commit-wizardrc', JSON.stringify(userConfig));
+      // Usar arquivo de teste separado
+      writeFileSync(testConfigPath, JSON.stringify(userConfig));
       
-      const config = loadConfig();
+      const config = loadConfig(testConfigPath);
       
       expect(config.language).toBe('en');
       expect(config.commitStyle).toBe('simple');
@@ -51,7 +53,7 @@ describe('Config Module', () => {
       expect(config.openai.temperature).toBe(0.5);
       expect(config.openai.maxTokens).toBe(150); // Default value preserved
       
-      unlinkSync('.commit-wizardrc');
+      // O arquivo será removido no afterEach
     });
   });
 
