@@ -1,0 +1,29 @@
+name: "CodeQL Config"
+
+queries:
+  # Usar consultas de segurança padrão
+  - uses: security-and-quality
+  # Consultas específicas para JavaScript/TypeScript
+  - uses: security-extended
+  # Consultas experimentais (opcional)
+  - uses: security-experimental
+
+paths:
+  # Incluir apenas código fonte
+  - src/
+  - bin/
+  - tests/
+
+paths-ignore:
+  # Ignorar arquivos de build e dependências
+  - dist/
+  - node_modules/
+  - .bun/
+  - docs_ai/
+
+query-filters:
+  # Filtrar consultas por categoria
+  - include:
+      tags contain: security
+  - exclude:
+      tags contain: experimental 
