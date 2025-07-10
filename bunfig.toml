@@ -4,9 +4,9 @@ cache = true
 exact = false
 production = false
 
-[install.scopes]
-# Configurações para escopo de pacotes
-"@types" = "latest"
+# [install.scopes]
+# Configurações para escopo de pacotes removidas
+# "@types" = "latest" # Esta configuração estava causando erro de registry
 
 [build]
 # Configurações de build
