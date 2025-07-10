@@ -9,16 +9,19 @@ Criar um pacote CLI com Bun.js chamado `commit-wizard`, disponível via `npx` ou
 ## ⚙️ Funcionalidades Principais
 
 ### 🧠 Integração com OpenAI
+
 - Enviar `git diff --staged` como prompt.
 - Configurar modelo (ex: `gpt-4o`, `gpt-3.5`), idioma, temperatura e max_tokens.
 - Resposta adaptada ao tipo de commit: único ou múltiplo (split).
 
 ### ✍️ Modos de Commit
+
 - Commit único (todos os arquivos).
 - Commit separado por arquivo ou bloco (split).
 - Dry run (simular sem executar).
 
 ### 🗂️ Configuração
+
 - `.commit-wizardrc` com:
   - Idioma (`pt`, `en`, etc.)
   - Modelo OpenAI
@@ -28,12 +31,14 @@ Criar um pacote CLI com Bun.js chamado `commit-wizard`, disponível via `npx` ou
   - Estilo de commit (convencional, simples, etc.)
 
 ### 🧑‍💻 Interação via CLI
+
 - Preview da mensagem gerada.
 - Editar antes de commitar.
 - Copiar para clipboard.
 - Cancelar ou confirmar.
 
 ### 💡 Funcionalidades Adicionais
+
 - Sugestão automática de tipo de commit (`feat`, `fix`, etc.).
 - Histórico de commits gerados.
 - Modo silencioso para automações (`--silent`).

@@ -3,6 +3,7 @@
 ## ✅ Implementado
 
 ### Core Functionality
+
 - [x] **Geração de commit único**: Implementado em `src/core/openai.ts`
 - [x] **Interface interativa**: Implementado em `src/ui/index.ts`
 - [x] **Validação de configuração**: Implementado em `src/config/index.ts`
@@ -13,6 +14,7 @@
 - [x] **Smart Split**: Implementado em `src/core/smart-split.ts` e `src/ui/smart-split.ts`
 
 ### Argumentos CLI
+
 - [x] `--silent` / `-s`: Modo silencioso
 - [x] `--yes` / `-y`: Confirmar automaticamente
 - [x] `--auto` / `-a`: Modo automático (--yes + --silent)
@@ -23,6 +25,7 @@
 - [x] `--version` / `-v`: Mostrar versão
 
 ### Integração Smart Split
+
 - [x] **Análise de contexto**: IA analisa arquivos e diff geral
 - [x] **Agrupamento inteligente**: Agrupa por funcionalidade/correção
 - [x] **Interface de escolha**: Usuário escolhe entre smart e manual
@@ -32,6 +35,7 @@
 - [x] **Modo dry-run**: Visualizar organização sem commitar
 
 ### ✨ NOVAS IMPLEMENTAÇÕES - Próximas Etapas
+
 - [x] **Edição completa de grupos**: Interface avançada para editar grupos do Smart Split
   - [x] ✏️ Renomear grupos e descrições
   - [x] 📁 Reorganizar arquivos entre grupos
@@ -71,6 +75,7 @@
   - [x] 🎯 Roadmap e próximas funcionalidades
 
 ### Testes
+
 - [x] **Testes unitários**: Implementados para todos os módulos
 - [x] **Testes de configuração**: Validação de config
 - [x] **Testes de argumentos**: Parsing de CLI args
@@ -79,6 +84,7 @@
 - [x] **✨ Testes de integração**: End-to-end completos com repositórios temporários
 
 ### Distribuição
+
 - [x] **bunfig.toml**: Configuração do Bun
 - [x] **package.json**: Scripts e metadados
 - [x] **LICENSE**: Licença MIT
@@ -88,12 +94,14 @@
 ## 🔄 Em Desenvolvimento
 
 ### Melhorias do Smart Split
+
 - [x] ~~**Edição de grupos**: Interface para editar grupos antes do commit~~ ✅ CONCLUÍDO
 - [x] **Cache de análises**: Cache de análises similares ✅ CONCLUÍDO
 - [ ] **Configuração de regras**: Personalizar regras de agrupamento
 - [ ] **Feedback do usuário**: Aprendizado com escolhas do usuário
 
 ### Interface do Usuário
+
 - [ ] **Tema escuro**: Suporte a tema escuro
 - [ ] **Animações**: Animações suaves na interface
 - [ ] **Atalhos de teclado**: Navegação por teclado
@@ -102,6 +110,7 @@
 ## 📋 Planejado
 
 ### Funcionalidades Avançadas
+
 - [x] **Cache inteligente**: Implementar sistema de cache para análises ✅ CONCLUÍDO
 - [ ] **Integração com CI/CD**: Hooks para pipelines
 - [ ] **Plugins**: Sistema de plugins extensível
@@ -110,18 +119,21 @@
 - [ ] **Análise de impacto**: Estimativa de impacto das mudanças
 
 ### Melhorias de Performance
+
 - [x] **Cache de análises**: Evitar chamadas repetidas à OpenAI ✅ CONCLUÍDO
 - [ ] **Processamento paralelo**: Processar grupos em paralelo
 - [ ] **Otimização de prompts**: Prompts mais eficientes
 - [ ] **Lazy loading**: Carregamento sob demanda
 
 ### Integrações
+
 - [ ] **GitHub Actions**: Workflow para CI/CD
 - [ ] **GitLab CI**: Integração com GitLab
 - [ ] **VS Code**: Extensão para VS Code
 - [ ] **JetBrains**: Plugin para IDEs JetBrains
 
 ### Publicação e Distribuição
+
 - [ ] **NPM Package**: Publicar no npm registry
 - [ ] **Homebrew**: Fórmula para instalação via brew
 - [ ] **Docker**: Container para uso em CI/CD
@@ -130,6 +142,7 @@
 ## 🎯 Próximos Passos (Atualizado)
 
 ### Prioridade Alta ✅ CONCLUÍDO
+
 1. ~~**Edição de grupos**: Permitir editar grupos antes do commit~~ ✅
 2. ~~**Configuração avançada**: Mais opções de configuração~~ ✅
 3. ~~**Testes de integração**: Testes end-to-end~~ ✅
@@ -137,11 +150,13 @@
 5. ~~**Cache de análises**: Sistema de cache para melhorar performance~~ ✅
 
 ### Prioridade Média (Próximas etapas)
+
 1. **Publicação**: Publicar no npm e setup de CI/CD
 2. **Interface melhorada**: UX mais polida com temas
 3. **Hooks e plugins**: Sistema extensível
 
 ### Prioridade Baixa
+
 1. **Integrações IDE**: VS Code e JetBrains
 2. **Animações**: Interface mais fluida
 3. **Atalhos**: Navegação por teclado
@@ -167,6 +182,7 @@
 ## 🎉 Conquistas das Próximas Etapas
 
 ### ✨ Cache de Análises
+
 - Sistema de cache em memória para análises similares
 - Hash MD5 do contexto para identificar análises similares
 - TTL configurável para invalidar cache antigo
@@ -175,23 +191,27 @@
 - Testes completos para todas as funcionalidades
 
 ### ✨ Edição Completa de Grupos
+
 - Interface rica para personalizar grupos do Smart Split
 - Múltiplas ações: renomear, reorganizar, criar, mesclar, excluir
 - Fluxo intuitivo com validações e feedback
 
 ### ⚙️ Sistema de Configuração Robusto
+
 - 40+ opções de configuração organizadas em categorias
 - Suporte a configuração global e local
 - Validação completa com mensagens de erro claras
 - Variáveis de ambiente para override
 
 ### 🧪 Cobertura de Testes Completa
+
 - Testes end-to-end com repositórios Git temporários
 - Cenários realistas de uso
 - Tratamento de casos extremos e erros
 - Helpers reutilizáveis para desenvolvimento futuro
 
 ### 📖 Documentação Profissional
+
 - README completo com exemplos práticos
 - Guias de instalação, configuração e troubleshooting
 - Demonstrações visuais das funcionalidades
