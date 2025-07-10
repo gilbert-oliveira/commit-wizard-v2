@@ -1,0 +1,217 @@
+name: Coverage Analytics
+
+on:
+  schedule:
+    # Executar diariamente às 6h UTC
+    - cron: '0 6 * * *'
+  workflow_dispatch:
+    inputs:
+      branch:
+        description: 'Branch para análise'
+        required: false
+        default: 'main'
+        type: string
+      report_type:
+        description: 'Tipo de relatório'
+        required: false
+        default: 'full'
+        type: choice
+        options:
+          - report
+          - trends
+          - compare
+          - full
+
+env:
+  NODE_VERSION: '18'
+  BUN_VERSION: '1.2.13'
+
+jobs:
+  coverage-analytics:
+    name: Analytics de Cobertura
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout código
+        uses: actions/checkout@v4
+        
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v1
+        with:
+          bun-version: ${{ env.BUN_VERSION }}
+          
+      - name: Cache dependências
+        uses: actions/cache@v3
+        with:
+          path: |
+            ~/.bun/install/cache
+            node_modules
+          key: ${{ runner.os }}-bun-${{ hashFiles('**/bun.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-bun-
+            
+      - name: Instalar dependências
+        run: bun install
+        
+      - name: Executar testes com cobertura
+        run: bun run test:coverage
+        
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v3
+        with:
+          file: ./coverage/lcov.info
+          flags: unittests
+          name: codecov-umbrella
+          fail_ci_if_error: false
+          verbose: true
+        env:
+          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
+          
+      - name: Gerar Analytics de Cobertura
+        run: |
+          echo "📊 Gerando analytics de cobertura..."
+          bun run coverage:analytics ${{ github.event.inputs.report_type || 'full' }} ${{ github.event.inputs.branch || 'main' }}
+        env:
+          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
+          GITHUB_REPOSITORY: ${{ github.repository }}
+          
+      - name: Upload relatório de analytics
+        uses: actions/upload-artifact@v3
+        if: always()
+        with:
+          name: coverage-analytics-report
+          path: coverage/analytics-report.json
+          retention-days: 30
+          
+      - name: Criar issue se cobertura baixa
+        if: failure()
+        uses: actions/github-script@v6
+        with:
+          script: |
+            const { data: coverage } = await github.rest.issues.create({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              title: '⚠️ Cobertura de código abaixo do ideal',
+              body: `
+              ## 📊 Relatório de Cobertura
+              
+              A cobertura de código está abaixo do padrão estabelecido (80%).
+              
+              **Ações recomendadas:**
+              - [ ] Revisar arquivos com baixa cobertura
+              - [ ] Adicionar testes para funcionalidades críticas
+              - [ ] Verificar relatório completo em: https://codecov.io/gh/${{ github.repository }}
+              
+              **Detalhes:**
+              - Branch: ${{ github.event.inputs.branch || 'main' }}
+              - Workflow: ${{ github.workflow }}
+              - Run: ${{ github.run_id }}
+              
+              _Gerado automaticamente pelo Coverage Analytics_
+              `,
+              labels: ['coverage', 'quality', 'automated']
+            });
+            
+  coverage-trends:
+    name: Análise de Tendências
+    runs-on: ubuntu-latest
+    needs: coverage-analytics
+    
+    steps:
+      - name: Checkout código
+        uses: actions/checkout@v4
+        
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v1
+        with:
+          bun-version: ${{ env.BUN_VERSION }}
+          
+      - name: Instalar dependências
+        run: bun install
+        
+      - name: Analisar tendências de cobertura
+        run: |
+          echo "📈 Analisando tendências de cobertura..."
+          bun run coverage:trends
+        env:
+          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
+          GITHUB_REPOSITORY: ${{ github.repository }}
+          
+      - name: Comparar branches
+        run: |
+          echo "🔄 Comparando cobertura entre branches..."
+          bun run coverage:compare main develop
+        env:
+          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
+          GITHUB_REPOSITORY: ${{ github.repository }}
+          
+  coverage-notification:
+    name: Notificação de Cobertura
+    runs-on: ubuntu-latest
+    needs: [coverage-analytics, coverage-trends]
+    if: always()
+    
+    steps:
+      - name: Download relatório de analytics
+        uses: actions/download-artifact@v3
+        with:
+          name: coverage-analytics-report
+          path: coverage/
+          
+      - name: Ler relatório
+        id: read-report
+        run: |
+          if [ -f "coverage/analytics-report.json" ]; then
+            COVERAGE_PERCENTAGE=$(cat coverage/analytics-report.json | jq -r '.summary.percentage')
+            echo "coverage_percentage=$COVERAGE_PERCENTAGE" >> $GITHUB_OUTPUT
+            echo "📊 Cobertura atual: $COVERAGE_PERCENTAGE%"
+          else
+            echo "coverage_percentage=0" >> $GITHUB_OUTPUT
+            echo "❌ Relatório não encontrado"
+          fi
+          
+      - name: Notificar se cobertura baixa
+        if: steps.read-report.outputs.coverage_percentage < 80
+        uses: actions/github-script@v6
+        with:
+          script: |
+            const { data: comment } = await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+              body: `
+              ## ⚠️ Alerta de Cobertura
+              
+              A cobertura de código está em **${{ steps.read-report.outputs.coverage_percentage }}%**, abaixo do ideal de 80%.
+              
+              **Recomendações:**
+              - Revisar arquivos com baixa cobertura
+              - Adicionar testes para funcionalidades críticas
+              - Verificar relatório completo no Codecov
+              
+              _Notificação automática do Coverage Analytics_
+              `
+            });
+            
+      - name: Comentar sucesso se cobertura alta
+        if: steps.read-report.outputs.coverage_percentage >= 80
+        uses: actions/github-script@v6
+        with:
+          script: |
+            const { data: comment } = await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+              body: `
+              ## ✅ Cobertura Excelente
+              
+              A cobertura de código está em **${{ steps.read-report.outputs.coverage_percentage }}%**! 🎉
+              
+              **Mantenha a qualidade:**
+              - Continue adicionando testes para novas funcionalidades
+              - Considere testes de edge cases
+              - Monitore tendências de cobertura
+              
+              _Notificação automática do Coverage Analytics_
+              `
+            }); 

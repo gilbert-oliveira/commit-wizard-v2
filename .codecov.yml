@@ -15,6 +15,15 @@ coverage:
         target: 80%
         threshold: 5%
 
+# Analytics e Relatórios
+analytics:
+  enabled: true
+  track_coverage_trends: true
+  track_file_coverage: true
+  track_branch_coverage: true
+  track_function_coverage: true
+
+# Configurações de Parser
 parsers:
   gcov:
     branch_detection:
@@ -23,11 +32,15 @@ parsers:
       method: no
       macro: no
 
+# Comentários em PRs
 comment:
   layout: "reach, diff, flags, files"
   behavior: default
   require_changes: false
+  show_cov_project_labels: true
+  show_cov_patch_labels: true
 
+# Configurações de Ignore
 ignore:
   - "tests/"
   - "**/*.test.ts"
@@ -49,5 +62,48 @@ ignore:
   - "SECURITY.md"
   - "CONTRIBUTING.md"
 
+# GitHub Checks
 github_checks:
-  annotations: true 
+  annotations: true
+  wait_for_ci: true
+
+# Flags para diferentes tipos de teste
+flags:
+  unittests:
+    paths:
+      - "src/"
+    carryforward: true
+  integration:
+    paths:
+      - "tests/integration.test.ts"
+      - "tests/smart-split.test.ts"
+    carryforward: true
+
+# Configurações de API
+api:
+  version: v2
+  timeout: 30
+  retries: 3
+
+# Notificações
+notifications:
+  slack:
+    url: $CODECOV_SLACK_WEBHOOK
+    channel: "#coverage"
+    on_success: change
+    on_failure: change
+  webhook:
+    url: $CODECOV_WEBHOOK_URL
+    on_success: change
+    on_failure: change
+
+# Configurações de Cache
+cache:
+  enabled: true
+  ttl: 3600
+  max_size: 100
+
+# Configurações de Segurança
+security:
+  require_auth: true
+  allow_anonymous: false 
