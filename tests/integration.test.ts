@@ -260,6 +260,7 @@ describe('Commit Wizard - Testes de Integração', () => {
     });
 
     it('deve gerar diff para grupo de arquivos', async () => {
+      process.chdir(tempRepo);
       modifyFiles(tempRepo, 'multiple');
       
       const { generateGroupDiff } = await import('../src/core/smart-split.ts');
@@ -359,6 +360,12 @@ describe('Commit Wizard - Testes de Integração', () => {
     });
 
     it('deve lidar com configuração JSON inválida', async () => {
+      // Suprimir avisos temporariamente
+      const originalWarn = console.warn;
+      const originalError = console.error;
+      console.warn = () => {};
+      console.error = () => {};
+
       const configPath = join(tempRepo, '.commit-wizardrc');
       writeFileSync(configPath, '{ invalid json }');
       
@@ -366,6 +373,10 @@ describe('Commit Wizard - Testes de Integração', () => {
       
       // Deve carregar configuração padrão sem quebrar
       expect(() => loadConfig(configPath)).not.toThrow();
+
+      // Restaurar comportamento normal
+      console.warn = originalWarn;
+      console.error = originalError;
     });
 
     it('deve lidar com arquivos grandes', async () => {
