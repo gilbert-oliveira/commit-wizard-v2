@@ -14,7 +14,9 @@ describe('Smart Split', () => {
           apiKey: '',
           model: 'gpt-3.5-turbo',
           maxTokens: 1000,
-          temperature: 0.7
+          temperature: 0.7,
+          timeout: 30000,
+          retries: 2
         },
         language: 'pt-BR',
         commitStyle: 'conventional',
@@ -24,7 +26,40 @@ describe('Smart Split', () => {
         prompt: {
           includeFileNames: true,
           includeDiffStats: true,
-          customInstructions: ''
+          customInstructions: '',
+          maxDiffSize: 8000
+        },
+        smartSplit: {
+          enabled: true,
+          minGroupSize: 1,
+          maxGroups: 5,
+          autoEdit: false,
+          confidenceThreshold: 0.7,
+          preferredGroupTypes: ['feat', 'fix', 'refactor', 'test', 'docs']
+        },
+        ui: {
+          theme: 'auto',
+          showProgress: true,
+          animateProgress: true,
+          compactMode: false
+        },
+        cache: {
+          enabled: true,
+          ttl: 60,
+          maxSize: 100
+        },
+        hooks: {
+          preCommit: [],
+          postCommit: [],
+          preGenerate: [],
+          postGenerate: []
+        },
+        advanced: {
+          maxFileSize: 1024,
+          excludePatterns: ['*.log', '*.tmp'],
+          includePatterns: [],
+          enableDebug: false,
+          logLevel: 'info'
         }
       };
 
@@ -41,7 +76,9 @@ describe('Smart Split', () => {
           apiKey: 'test-key',
           model: 'gpt-3.5-turbo',
           maxTokens: 1000,
-          temperature: 0.7
+          temperature: 0.7,
+          timeout: 30000,
+          retries: 2
         },
         language: 'pt-BR',
         commitStyle: 'conventional',
@@ -51,7 +88,40 @@ describe('Smart Split', () => {
         prompt: {
           includeFileNames: true,
           includeDiffStats: true,
-          customInstructions: ''
+          customInstructions: '',
+          maxDiffSize: 8000
+        },
+        smartSplit: {
+          enabled: true,
+          minGroupSize: 1,
+          maxGroups: 5,
+          autoEdit: false,
+          confidenceThreshold: 0.7,
+          preferredGroupTypes: ['feat', 'fix', 'refactor', 'test', 'docs']
+        },
+        ui: {
+          theme: 'auto',
+          showProgress: true,
+          animateProgress: true,
+          compactMode: false
+        },
+        cache: {
+          enabled: true,
+          ttl: 60,
+          maxSize: 100
+        },
+        hooks: {
+          preCommit: [],
+          postCommit: [],
+          preGenerate: [],
+          postGenerate: []
+        },
+        advanced: {
+          maxFileSize: 1024,
+          excludePatterns: ['*.log', '*.tmp'],
+          includePatterns: [],
+          enableDebug: false,
+          logLevel: 'info'
         }
       };
 
