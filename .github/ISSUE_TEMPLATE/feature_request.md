@@ -4,7 +4,6 @@ about: Sugira uma ideia para este projeto
 title: '[FEATURE] '
 labels: ['enhancement']
 assignees: ''
-
 ---
 
 **Sua solicitação de funcionalidade está relacionada a um problema? Por favor descreva.**
@@ -28,4 +27,4 @@ Se aplicável, mostre como a funcionalidade seria usada:
 ```bash
 # Exemplo de comando
 commit-wizard --nova-funcionalidade
-``` 
+```

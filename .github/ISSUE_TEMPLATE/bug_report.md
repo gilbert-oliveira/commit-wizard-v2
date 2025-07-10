@@ -4,7 +4,6 @@ about: Crie um reporte para nos ajudar a melhorar
 title: '[BUG] '
 labels: ['bug']
 assignees: ''
-
 ---
 
 **Descreva o bug**
@@ -12,6 +11,7 @@ Uma descrição clara e concisa do que é o bug.
 
 **Para reproduzir**
 Passos para reproduzir o comportamento:
+
 1. Vá para '...'
 2. Clique em '....'
 3. Role até '....'
@@ -24,10 +24,11 @@ Uma descrição clara e concisa do que você esperava que acontecesse.
 Se aplicável, adicione screenshots para ajudar a explicar seu problema.
 
 **Ambiente (complete as informações):**
- - OS: [ex: Ubuntu 22.04]
- - Node.js: [ex: 18.17.0]
- - Bun: [ex: 1.0.0]
- - commit-wizard: [ex: 1.0.0]
+
+- OS: [ex: Ubuntu 22.04]
+- Node.js: [ex: 18.17.0]
+- Bun: [ex: 1.0.0]
+- commit-wizard: [ex: 1.0.0]
 
 **Configuração**
 Se aplicável, adicione o conteúdo do seu arquivo `.commit-wizardrc`:
@@ -46,4 +47,4 @@ Se aplicável, adicione logs de erro:
 ```
 
 **Contexto adicional**
-Adicione qualquer outro contexto sobre o problema aqui. 
+Adicione qualquer outro contexto sobre o problema aqui.

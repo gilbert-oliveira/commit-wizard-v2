@@ -1,47 +1,47 @@
 version: 2
 updates:
   # Manter dependências do Bun atualizadas
-  - package-ecosystem: "bun"
-    directory: "/"
+  - package-ecosystem: 'bun'
+    directory: '/'
     schedule:
-      interval: "weekly"
-      day: "monday"
-      time: "09:00"
+      interval: 'weekly'
+      day: 'monday'
+      time: '09:00'
     open-pull-requests-limit: 10
     reviewers:
-      - "gilbert-oliveira"
+      - 'gilbert-oliveira'
     assignees:
-      - "gilbert-oliveira"
+      - 'gilbert-oliveira'
     commit-message:
-      prefix: "chore"
-      include: "scope"
+      prefix: 'chore'
+      include: 'scope'
     labels:
-      - "dependencies"
-      - "automated"
+      - 'dependencies'
+      - 'automated'
     ignore:
       # Ignorar atualizações de versões major que podem quebrar
-      - dependency-name: "@clack/prompts"
-        update-types: ["version-update:semver-major"]
-      - dependency-name: "simple-git"
-        update-types: ["version-update:semver-major"]
-      - dependency-name: "clipboardy"
-        update-types: ["version-update:semver-major"]
+      - dependency-name: '@clack/prompts'
+        update-types: ['version-update:semver-major']
+      - dependency-name: 'simple-git'
+        update-types: ['version-update:semver-major']
+      - dependency-name: 'clipboardy'
+        update-types: ['version-update:semver-major']
 
   # Manter GitHub Actions atualizadas
-  - package-ecosystem: "github-actions"
-    directory: "/"
+  - package-ecosystem: 'github-actions'
+    directory: '/'
     schedule:
-      interval: "monthly"
-      day: "monday"
-      time: "09:00"
+      interval: 'monthly'
+      day: 'monday'
+      time: '09:00'
     open-pull-requests-limit: 5
     reviewers:
-      - "gilbert-oliveira"
+      - 'gilbert-oliveira'
     assignees:
-      - "gilbert-oliveira"
+      - 'gilbert-oliveira'
     commit-message:
-      prefix: "ci"
-      include: "scope"
+      prefix: 'ci'
+      include: 'scope'
     labels:
-      - "github-actions"
-      - "automated" 
+      - 'github-actions'
+      - 'automated'

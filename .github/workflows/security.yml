@@ -2,9 +2,9 @@ name: Segurança e Análise de Código
 
 on:
   push:
-    branches: [ main, develop ]
+    branches: [main, develop]
   pull_request:
-    branches: [ main, develop ]
+    branches: [main, develop]
   schedule:
     - cron: '0 2 * * 1' # Toda segunda-feira às 2h
 
@@ -14,11 +14,11 @@ jobs:
     name: Análise de Dependências
     runs-on: ubuntu-latest
     if: github.event_name == 'pull_request'
-    
+
     steps:
       - name: Checkout código
         uses: actions/checkout@v4
-        
+
       - name: Dependency Review
         uses: actions/dependency-review-action@v3
         with:
@@ -32,29 +32,29 @@ jobs:
       actions: read
       contents: read
       security-events: write
-    
+
     strategy:
       fail-fast: false
       matrix:
         language: ['javascript']
-    
+
     steps:
       - name: Checkout código
         uses: actions/checkout@v4
-        
+
       - name: Setup Bun
         uses: oven-sh/setup-bun@v1
         with:
           bun-version: '1.0.0'
-          
+
       - name: Initialize CodeQL
         uses: github/codeql-action/init@v2
         with:
           languages: ${{ matrix.language }}
-          
+
       - name: Autobuild
         uses: github/codeql-action/autobuild@v2
-        
+
       - name: Perform CodeQL Analysis
         uses: github/codeql-action/analyze@v2
 
@@ -62,23 +62,23 @@ jobs:
   security-audit:
     name: Auditoria de Segurança
     runs-on: ubuntu-latest
-    
+
     steps:
       - name: Checkout código
         uses: actions/checkout@v4
-        
+
       - name: Setup Bun
         uses: oven-sh/setup-bun@v1
         with:
           bun-version: '1.0.0'
-          
+
       - name: Instalar dependências
         run: bun install
-        
+
       - name: Auditoria de segurança
         run: bun audit
         continue-on-error: true
-        
+
       - name: Verificar dependências desatualizadas
         run: |
           echo "🔍 Verificando dependências desatualizadas..."
@@ -89,32 +89,32 @@ jobs:
   code-quality:
     name: Qualidade de Código
     runs-on: ubuntu-latest
-    
+
     steps:
       - name: Checkout código
         uses: actions/checkout@v4
-        
+
       - name: Setup Bun
         uses: oven-sh/setup-bun@v1
         with:
           bun-version: '1.0.0'
-          
+
       - name: Instalar dependências
         run: bun install
-        
+
       - name: Verificar complexidade ciclomática
         run: |
           echo "📊 Análise de complexidade do código..."
           find src/ -name "*.ts" -exec echo "Arquivo: {}" \;
           echo "✅ Análise de complexidade concluída"
         continue-on-error: true
-        
+
       - name: Verificar tamanho dos arquivos
         run: |
           echo "📏 Tamanho dos arquivos TypeScript:"
           find src/ -name "*.ts" -exec wc -l {} + | sort -nr
         continue-on-error: true
-        
+
       - name: Verificar imports não utilizados
         run: |
           echo "🔍 Verificando imports não utilizados..."
@@ -126,32 +126,32 @@ jobs:
   performance:
     name: Testes de Performance
     runs-on: ubuntu-latest
-    
+
     steps:
       - name: Checkout código
         uses: actions/checkout@v4
-        
+
       - name: Setup Bun
         uses: oven-sh/setup-bun@v1
         with:
           bun-version: '1.0.0'
-          
+
       - name: Instalar dependências
         run: bun install
-        
+
       - name: Build do projeto
         run: bun run build
-        
+
       - name: Teste de performance do build
         run: |
           echo "⚡ Testando performance do build..."
           time bun run build
           echo "✅ Build concluído"
         continue-on-error: true
-        
+
       - name: Verificar tamanho do bundle
         run: |
           echo "📦 Tamanho do bundle gerado:"
           ls -lh dist/
           echo "✅ Verificação de tamanho concluída"
-        continue-on-error: true 
+        continue-on-error: true

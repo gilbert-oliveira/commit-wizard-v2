@@ -1,7 +1,9 @@
 ## 📝 Descrição
+
 Descreva as mudanças incluídas neste PR.
 
 ## 🎯 Tipo de mudança
+
 - [ ] Bug fix (correção que resolve um problema)
 - [ ] New feature (nova funcionalidade)
 - [ ] Breaking change (mudança que quebra compatibilidade)
@@ -10,6 +12,7 @@ Descreva as mudanças incluídas neste PR.
 - [ ] Refactoring (refatoração de código)
 
 ## ✅ Checklist
+
 - [ ] Meu código segue as diretrizes de estilo deste projeto
 - [ ] Eu fiz uma auto-revisão do meu próprio código
 - [ ] Eu comentei meu código, particularmente em áreas difíceis de entender
@@ -20,6 +23,7 @@ Descreva as mudanças incluídas neste PR.
 - [ ] Quaisquer mudanças dependentes foram documentadas e atualizadas
 
 ## 🧪 Como testar
+
 Descreva os passos para testar suas mudanças:
 
 1. Clone o repositório
@@ -28,10 +32,13 @@ Descreva os passos para testar suas mudanças:
 4. Teste a funcionalidade: `bun run dev`
 
 ## 📸 Screenshots (se aplicável)
+
 Adicione screenshots para ajudar a explicar suas mudanças.
 
 ## 🔗 Issue relacionada
+
 Fixes #(issue)
 
 ## 📋 Contexto adicional
-Adicione qualquer outro contexto sobre o problema aqui. 
+
+Adicione qualquer outro contexto sobre o problema aqui.

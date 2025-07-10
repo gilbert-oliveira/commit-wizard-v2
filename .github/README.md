@@ -10,6 +10,7 @@
 ## 🚀 Status do CI/CD
 
 ### Pipeline Principal
+
 - ✅ **Testes**: Unitários, integração e cobertura
 - ✅ **Build**: Compilação e verificação
 - ✅ **Lint**: Formatação e tipos TypeScript
@@ -17,6 +18,7 @@
 - ✅ **Deploy**: Testes em múltiplos ambientes
 
 ### Métricas de Qualidade
+
 - 📊 **Cobertura de Testes**: 100%
 - ⚡ **Tempo de Build**: < 30s
 - 🧪 **Tempo de Testes**: < 60s
@@ -25,11 +27,13 @@
 ## 📦 Releases
 
 ### Última Release
+
 - **Versão**: [![npm version](https://badge.fury.io/js/commit-wizard.svg)](https://badge.fury.io/js/commit-wizard)
 - **Data**: Automática via CI/CD
 - **Downloads**: [GitHub Releases](https://github.com/gilbert-oliveira/commit-wizard-v2/releases)
 
 ### Instalação
+
 ```bash
 # Via npm
 npm install -g commit-wizard
@@ -44,11 +48,13 @@ bun add -g commit-wizard
 ## 🔧 Desenvolvimento
 
 ### Pré-requisitos
+
 - Node.js 18+
 - Bun 1.0.0+
 - Git
 
 ### Setup Local
+
 ```bash
 # Clone o repositório
 git clone https://github.com/gilbert-oliveira/commit-wizard.git
@@ -65,6 +71,7 @@ bun run dev
 ```
 
 ### Scripts Disponíveis
+
 ```bash
 # Desenvolvimento
 bun run dev          # Executar em modo dev
@@ -87,12 +94,14 @@ bun run release:major # Release major
 ## 🛡️ Segurança
 
 ### Análise Automática
+
 - **CodeQL**: Análise estática de segurança
 - **Dependabot**: Atualizações automáticas de dependências
 - **Audit**: Verificação de vulnerabilidades
 - **Branch Protection**: Proteções automáticas
 
 ### Relatórios
+
 - [Security Advisories](https://github.com/gilbert-oliveira/commit-wizard-v2/security/advisories)
 - [Dependabot Alerts](https://github.com/gilbert-oliveira/commit-wizard-v2/security/dependabot)
 - [Code Scanning](https://github.com/gilbert-oliveira/commit-wizard-v2/security/code-scanning)
@@ -100,12 +109,14 @@ bun run release:major # Release major
 ## 📊 Métricas
 
 ### Performance
+
 - **Build Time**: ~15s
 - **Test Time**: ~25s
 - **Bundle Size**: ~500KB
 - **Dependencies**: 4 principais
 
 ### Qualidade
+
 - **TypeScript**: 100% tipado
 - **Test Coverage**: 100%
 - **Lint Score**: 100%
@@ -114,6 +125,7 @@ bun run release:major # Release major
 ## 🔄 Workflow
 
 ### Desenvolvimento
+
 1. Fork do repositório
 2. Criar branch: `git checkout -b feature/nova-funcionalidade`
 3. Desenvolver e testar: `bun test`
@@ -121,6 +133,7 @@ bun run release:major # Release major
 5. Push e criar Pull Request
 
 ### CI/CD Automático
+
 1. **Push/PR** → Dispara workflows
 2. **Testes** → Validação de qualidade
 3. **Segurança** → Análise de vulnerabilidades
@@ -128,6 +141,7 @@ bun run release:major # Release major
 5. **Deploy** → Testes em ambientes
 
 ### Release
+
 1. **Merge para main** → Deploy automático
 2. **Tag de release** → Publicação no NPM
 3. **GitHub Release** → Assets disponíveis
@@ -135,6 +149,7 @@ bun run release:major # Release major
 ## 📈 Roadmap
 
 ### Próximas Funcionalidades
+
 - [ ] Cache inteligente para análises
 - [ ] Integração com mais IDEs
 - [ ] Templates customizados
@@ -142,6 +157,7 @@ bun run release:major # Release major
 - [ ] Métricas avançadas
 
 ### Melhorias de CI/CD
+
 - [ ] Cache otimizado
 - [ ] Testes paralelos
 - [ ] Deploy canário
@@ -150,12 +166,14 @@ bun run release:major # Release major
 ## 🤝 Contribuindo
 
 ### Diretrizes
+
 - Siga o [Conventional Commits](https://conventionalcommits.org/)
 - Mantenha cobertura de testes em 100%
 - Execute `bun run ci:lint` antes de commitar
 - Adicione testes para novas funcionalidades
 
 ### Processo
+
 1. Abra uma issue descrevendo o problema/melhoria
 2. Fork e crie uma branch
 3. Desenvolva e teste localmente
@@ -176,4 +194,4 @@ MIT License - veja [LICENSE](LICENSE) para detalhes.
 
 ---
 
-**Desenvolvido com ❤️ usando [Bun](https://bun.sh) e [GitHub Actions](https://github.com/features/actions)** 
+**Desenvolvido com ❤️ usando [Bun](https://bun.sh) e [GitHub Actions](https://github.com/features/actions)**

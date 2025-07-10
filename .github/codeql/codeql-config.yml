@@ -1,4 +1,4 @@
-name: "CodeQL Config"
+name: 'CodeQL Config'
 
 queries:
   # Usar consultas de segurança padrão
@@ -26,4 +26,4 @@ query-filters:
   - include:
       tags contain: security
   - exclude:
-      tags contain: experimental 
+      tags contain: experimental
