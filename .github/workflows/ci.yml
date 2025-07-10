@@ -54,6 +54,8 @@ jobs:
           name: codecov-umbrella
           fail_ci_if_error: false
           verbose: true
+        env:
+          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
         
       - name: Build do projeto
         run: bun run build
