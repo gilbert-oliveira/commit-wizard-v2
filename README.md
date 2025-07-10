@@ -2,6 +2,11 @@
 
 > **Gere mensagens de commit inteligentes usando IA**
 
+[![CI/CD](https://github.com/gilbert-oliveira/commit-wizard-v2/workflows/CI%2FCD%20Pipeline/badge.svg)](https://github.com/gilbert-oliveira/commit-wizard-v2/actions)
+[![Codecov](https://codecov.io/gh/gilbert-oliveira/commit-wizard-v2/branch/main/graph/badge.svg)](https://codecov.io/gh/gilbert-oliveira/commit-wizard-v2)
+[![npm version](https://img.shields.io/npm/v/commit-wizard.svg)](https://www.npmjs.com/package/commit-wizard)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+
 Um CLI desenvolvido com Bun.js que analisa suas mudanças no Git e gera mensagens de commit personalizadas usando a API da OpenAI.
 
 ## ✨ Funcionalidades
