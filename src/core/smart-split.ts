@@ -300,6 +300,30 @@ export async function handleSmartSplitMode(
     });
   }
 
+  // Mostrar interface de Smart Split para o usuário decidir
+  if (!args.yes && !args.silent) {
+    const { showSmartSplitGroups } = await import('../ui/smart-split.ts');
+    const userAction = await showSmartSplitGroups(analysis.groups);
+    
+    if (userAction.action === 'cancel') {
+      log.info('❌ Operação cancelada pelo usuário');
+      return;
+    }
+    
+    if (userAction.action === 'manual') {
+      // Delegar para modo manual - re-executar com flag split
+      const newArgs = { ...args, split: true, smartSplit: false };
+      const { main } = await import('./index.ts');
+      await main(newArgs);
+      return;
+    }
+    
+    // Se o usuário editou os grupos, usar os grupos editados
+    if (userAction.groups) {
+      analysis.groups = userAction.groups;
+    }
+  }
+
   // Processar cada grupo
   for (let i = 0; i < analysis.groups.length; i++) {
     const group = analysis.groups[i];
@@ -397,15 +421,16 @@ export async function handleSmartSplitMode(
           let commitResult;
           
           // Fazer commit apenas dos arquivos do grupo atual
+          const commitMessage = result.suggestion.message || 'Atualização de arquivos';
           if (group.files.length === 1) {
-            commitResult = executeFileCommit(group.files[0], result.suggestion.message || '');
+            commitResult = executeFileCommit(group.files[0], commitMessage);
           } else {
             // Para múltiplos arquivos, usar commit normal mas com apenas os arquivos do grupo
             const { execSync } = await import('child_process');
             try {
               // Fazer commit apenas dos arquivos do grupo
               const filesArg = group.files.map(f => `"${f}"`).join(' ');
-              execSync(`git commit ${filesArg} -m "${(result.suggestion.message || '').replace(/"/g, '\\"')}"`, { 
+              execSync(`git commit ${filesArg} -m "${commitMessage.replace(/"/g, '\\"')}"`, { 
                 stdio: 'pipe' 
               });
               
@@ -414,7 +439,7 @@ export async function handleSmartSplitMode(
                 stdio: 'pipe' 
               }).trim();
               
-              commitResult = { success: true, hash, message: result.suggestion.message || '' };
+              commitResult = { success: true, hash, message: commitMessage };
             } catch (error) {
               commitResult = { 
                 success: false, 
